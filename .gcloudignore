@@ -1,0 +1,6 @@
+#!include:.gitignore
+
+# (LS): Things we don't want to deploy to Cloud Run
+README.md
+.env.template
+tests/
