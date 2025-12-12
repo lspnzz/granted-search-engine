@@ -41,3 +41,14 @@ TIGRIS_EMBEDDED_EU_GRANT_CHUNKS_BUCKET_NAME=your_tigris_embedded_eu_grant_chunks
     --set-secrets="PINECONE_API_KEY=projects/PROJECT_ID/secrets/PINECONE_API_KEY/versions/latest,OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest,TIGRIS_ACCESS_KEY_SECRET=projects/PROJECT_ID/secrets/TIGRIS_ACCESS_KEY_SECRET/versions/latest,TIGRIS_ACCESS_KEY_ID=projects/PROJECT_ID/secrets/TIGRIS_ACCESS_KEY_ID/versions/latest "
 
 ```
+
+
+```bash
+gcloud run deploy granted-fetch-eu-grants \
+    --source=./data-fetcher \
+    --function=fetch_eu_grants \
+    --region=europe-west1 \
+    --base-image=python313 \
+    --allow-unauthenticated \
+    --set-env-vars="GCS_BUCKET_NAME=bucket-name"
+```
