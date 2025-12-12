@@ -4,7 +4,8 @@ from src.models import SearchRequest
 from src.search import search
 from src.utils import configure_logging
 
-logger = configure_logging(log_level=logging.INFO)
+configure_logging(log_level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @functions_framework.http
