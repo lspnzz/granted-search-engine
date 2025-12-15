@@ -66,19 +66,36 @@ def store_chunks():
     mark_embedded_chunks_as_stored(chunks_object_key)
 
 
-
-
 @functions_framework.http
-def run_full_pipeline(request=None):
+def run_pipeline(request=None):
 
   # TODO(LS): Expect a payload to determine if we should fetch new grants or just reprocess existing.
   # TODO(LS): Expect parameters to chose embedding models, chuniking strategy, etc.
 
-    fetch_grants()
-    process_grants()
-    store_chunks()
-    return "Pipeline finished successfully"
+  request_json = request.get_json(silent=True)    
+    if not request_json:
+        return ({"error": "Invalid JSON or empty body provided"}, 400)  # (LS): Bad Request
+
+  try:
+    pipeline_req = PipelineRequest(**request_json)  # (LS): Validate with Pydantic
+
+    if pipeline_req.fetch:
+      fetch_grants()
+    if pipeline_req.process:
+      process_grants()
+    if pipeline_req.store:
+      store_chunks()
+    
+    return "Pipeline completed successfully"
+
+  except ValidationError as e:
+    logger.error(f"Validation Error: {e}")
+    return ({"error": "Validation Error", "details": e.errors()}, 400)
+    
+  except Exception as e:
+    logger.error(f"Error executing pipeline: {e}") 
+    return ({"error": "Internal Server Error"}, 500)
 
 
 if __name__ == "__main__":
-    run_full_pipeline()
+    run_pipeline()
