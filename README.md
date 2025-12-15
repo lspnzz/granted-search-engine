@@ -7,13 +7,15 @@ A serverless application that helps users find relevant EU grants based on their
 The application exposes an HTTP endpoint via Google Cloud Run Functions. It takes a project pitch as input, generates vector embeddings using OpenAI, and performs a semantic search against a Pinecone vector database to return the most relevant grants.
 
 
-## Environment setup (within each directory)
+## Environment setup (it's a shared environment for all services)
 
 ```bash
 python3.13 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r ./data-pipeline/requirements.txt
+pip install -r ./search-engine/requirements.txt
 ```
+
 
 ## Deploy to Google Cloud Run Functions (from the root directory)
 
@@ -30,16 +32,13 @@ gcloud run deploy granted-search-engine \
 ```
 
 ```bash
-gcloud run deploy granted-data-pipeline \
+gcloud run deploy data-pipeline \
     --source=./data-pipeline \
-    --function=run_full_pipeline \
+    --function=run_pipeline \
     --region=REGION \
     --base-image=python313 \
     --allow-unauthenticated \
-    --set-env-vars="EU_GRANT_CHUNKS_INDEX_HOST=your_eu_grants_index_host_here,EU_GRANT_CHUNKS_NAMESPACE=your_eu_grants_namespace_here,TIGRIS_RAW_EU_GRANTS_BUCKET_NAME=your_tigris_raw_eu_grants_bucket_name_here,
-TIGRIS_EMBEDDED_EU_GRANT_CHUNKS_BUCKET_NAME=your_tigris_embedded_eu_grant_chunks_bucket_name_here" \
-    --set-secrets="PINECONE_API_KEY=projects/PROJECT_ID/secrets/PINECONE_API_KEY/versions/latest,OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest,TIGRIS_ACCESS_KEY_SECRET=projects/PROJECT_ID/secrets/TIGRIS_ACCESS_KEY_SECRET/versions/latest,TIGRIS_ACCESS_KEY_ID=projects/PROJECT_ID/secrets/TIGRIS_ACCESS_KEY_ID/versions/latest "
-
+    --set-secrets="PINECONE_API_KEY=projects/PROJECT_ID/secrets/PINECONE_API_KEY/versions/latest,OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest"
 ```
 
 

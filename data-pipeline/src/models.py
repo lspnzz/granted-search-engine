@@ -1,8 +1,5 @@
-from typing import Any
+from enum import StrEnum
 from pydantic import BaseModel
-
-
-__all__ = ["Grant", "GrantChunk"]
 
 
 class Grant(BaseModel):
@@ -16,7 +13,7 @@ class Grant(BaseModel):
     start_date: str
     deadline_date: str
     status: str
-    total_funding_opportunity: float  # (LS): Assuming currency is EUR
+    total_funding_opportunity: float | None  # (LS): Assuming currency is EUR
 
 
 class GrantMetadata(BaseModel):
@@ -38,9 +35,15 @@ class GrantChunk(BaseModel):
     metadata: GrantMetadata
 
 
+class PipelineStep(StrEnum):
+    PROCESS = "process"
+    STORE = "store"
+
+
 class PipelineRequest(BaseModel):
-    fetch: bool
-    process: bool
-    store: bool
+    start_from: PipelineStep | None = None
+    pinecone_index_host: str | None = None
+    pinecone_namespace: str | None = None
+
     # TODO(LS): Add chunk parameters
     # TODO(LS): Add embedding parameters
