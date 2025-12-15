@@ -1,0 +1,7 @@
+dotenv==0.9.9
+functions-framework==3.10.0
+google-cloud-storage==3.7.0
+pandas==2.3.3
+pinecone==8.0.0
+pyarrow==22.0.0
+pydantic==2.12.5
