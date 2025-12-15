@@ -52,3 +52,15 @@ gcloud run deploy granted-fetch-eu-grants \
     --allow-unauthenticated \
     --set-env-vars="GCS_BUCKET_NAME=bucket-name"
 ```
+
+
+```bash
+gcloud run deploy granted-process-grants \
+    --source=./data-processor \
+    --function=process_raw_grants \
+    --region=europe-west1 \
+    --base-image=python313 \
+    --allow-unauthenticated \
+    --set-env-vars="GCS_OUTPUT_BUCKET_NAME=bucket-name" \
+    --set-secrets="OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest"
+```

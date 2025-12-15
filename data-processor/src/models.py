@@ -1,9 +1,4 @@
-from typing import Any
 from pydantic import BaseModel
-
-
-__all__ = ["Grant", "GrantChunk"]
-
 
 class Grant(BaseModel):
     """Data model for a processed EU grant."""
@@ -36,11 +31,3 @@ class GrantChunk(BaseModel):
     text: str
     embedding: list[float] | None = None
     metadata: GrantMetadata
-
-
-class PipelineRequest(BaseModel):
-    fetch: bool
-    process: bool
-    store: bool
-    # TODO(LS): Add chunk parameters
-    # TODO(LS): Add embedding parameters
