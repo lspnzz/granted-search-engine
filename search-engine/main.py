@@ -4,7 +4,7 @@ from src.models import SearchRequest
 from src.search import search
 from src.utils import configure_logging
 
-configure_logging(log_level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -17,9 +17,12 @@ def search_grants(request):
         dict: The response data.
     """
 
-    request_json = request.get_json(silent=True)    
+    request_json = request.get_json(silent=True)
     if not request_json:
-        return ({"error": "Invalid JSON or empty body provided"}, 400)  # (LS): Bad Request
+        return (
+            {"error": "Invalid JSON or empty body provided"},
+            400,
+        )  # (LS): Bad Request
 
     try:
         search_req = SearchRequest(**request_json)  # (LS): Validate with Pydantic
@@ -27,7 +30,7 @@ def search_grants(request):
 
         response_data = {
             "pitch": search_req.pitch,
-            "grants": [g.model_dump() for g in grants]
+            "grants": [g.model_dump() for g in grants],
         }
 
         return response_data
@@ -35,7 +38,7 @@ def search_grants(request):
     except ValidationError as e:
         logger.error(f"Validation Error: {e}")
         return ({"error": "Validation Error", "details": e.errors()}, 400)
-        
+
     except Exception as e:
-        logger.error(f"Error executing search: {e}") 
+        logger.error(f"Error executing search: {e}")
         return ({"error": "Internal Server Error"}, 500)
