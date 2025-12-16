@@ -2,11 +2,11 @@ import logging
 import functions_framework
 from pydantic import ValidationError
 from src.extractors.eu_grants_fetcher import fetch_grants
-from src.loaders.objectstore import store_raw_grants
+from src.loaders.objectstore import store_raw_grants, load_raw_grants
 from src.transformers.clean import clean_grants
 from src.transformers.chunk import chunk_grants
 from src.transformers.embed import embed_chunks
-from src.models import Grant, PipelineRequest
+from src.models import PipelineRequest
 from src.loaders.vectorstore import upsert_chunks_to_pinecone
 
 
@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 
 @functions_framework.http
 def run_pipeline(request):
-
-    # TODO(LS): Expect a payload to determine if we should fetch new grants or just reprocess existing.
     # TODO(LS): Expect parameters to chose embedding models, chuniking strategy, etc.
 
     request_json = request.get_json(silent=True)
@@ -34,15 +32,27 @@ def run_pipeline(request):
 
         INDEX_HOST = pipeline_req.pinecone_index_host
         NAMESPACE = pipeline_req.pinecone_namespace
+        grants_filename = pipeline_req.load_grants_from_file
 
-        raw_grants = fetch_grants()
-        store_raw_grants(raw_grants)
+        if grants_filename:
+            raw_grants = load_raw_grants(grants_filename)
+            logger.info(f"Loaded {len(raw_grants)} grants from file: {grants_filename}")
+        else:
+            raw_grants = fetch_grants()
+            store_raw_grants(raw_grants)
+            logger.info(f"Fetched {len(raw_grants)} grants")
+
+        logger.info(f"Starting grants cleaning...")
         cleaned_grants = clean_grants(raw_grants)
+        logger.info(f"Grants cleaned: {len(cleaned_grants)}")
         chunks = chunk_grants(cleaned_grants)
+        logger.info(f"Chunks created: {len(chunks)}")
         embedded_chunks = embed_chunks(chunks)
+        logger.info(f"Chunks embedded: {len(embedded_chunks)}")
         # TODO(LS): Store embedded chunks to object store.
         # TODO(LS): Move raw grants to processed bucket.
         upsert_chunks_to_pinecone(embedded_chunks, host=INDEX_HOST, namespace=NAMESPACE)
+        logger.info(f"Chunks upserted to Pinecone")
         # TODO(LS): Move embedded chunks to processed bucket.
         return "Pipeline completed successfully"
 
