@@ -1,8 +1,9 @@
 import functions_framework
 import logging
+from pydantic import ValidationError
 from src.models import SearchRequest
-from src.search import search
-from src.utils import configure_logging
+from src.embed import embed_pitch
+from src.vectorstore import query_grants
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,13 +11,6 @@ logger = logging.getLogger(__name__)
 
 @functions_framework.http
 def search_grants(request):
-    """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-    Returns:
-        dict: The response data.
-    """
-
     request_json = request.get_json(silent=True)
     if not request_json:
         return (
@@ -26,10 +20,21 @@ def search_grants(request):
 
     try:
         search_req = SearchRequest(**request_json)  # (LS): Validate with Pydantic
-        grants = search(search_req.pitch)
+        pitch = search_req.pitch
+        top_k = search_req.top_k
+        index_host = search_req.pinecone_index_host
+        namespace = search_req.pinecone_namespace
+
+        embedded_pitch = embed_pitch(pitch)
+        grants = query_grants(
+            embedded_pitch,
+            top_k=top_k,
+            host=index_host,
+            namespace=namespace,
+        )
 
         response_data = {
-            "pitch": search_req.pitch,
+            "pitch": pitch,
             "grants": [g.model_dump() for g in grants],
         }
 
