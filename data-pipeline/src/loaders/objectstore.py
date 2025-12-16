@@ -28,11 +28,11 @@ def _store_to_gcs(bucket_name: str, blob_name: str, data: list):
     try:
         bucket = _get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
-        
+
         # (LS): Serialize the list of data to a JSON string
         json_data = json.dumps(data)
         blob.upload_from_string(json_data, content_type="application/json")
-        
+
         logger.info(f"Uploaded {len(data)} items to gs://{bucket_name}/{blob_name}")
     except Exception as e:
         logger.error(f"Failed to upload to GCS: {e}")
@@ -53,3 +53,12 @@ def store_raw_grants(grants: list[Grant]) -> None:
     bucket_name = RAW_EU_GRANTS_BUCKET_NAME
     object_key = _get_raw_grants_object_key()
     _store_to_gcs(bucket_name, object_key, grants)
+
+
+def load_raw_grants(file_name: str) -> list[dict]:
+    bucket_name = RAW_EU_GRANTS_BUCKET_NAME
+    bucket = _get_bucket(bucket_name)
+    object_key = INCOMING_PREFIX + file_name
+    blob = bucket.blob(object_key)
+    raw_grants = blob.download_as_text()
+    return json.loads(raw_grants)

@@ -35,13 +35,8 @@ class GrantChunk(BaseModel):
     metadata: GrantMetadata
 
 
-class PipelineStep(StrEnum):
-    PROCESS = "process"
-    STORE = "store"
-
-
 class PipelineRequest(BaseModel):
-    start_from: PipelineStep | None = None
+    load_grants_from_file: str | None = None
     pinecone_index_host: str | None = None
     pinecone_namespace: str | None = None
 

@@ -60,6 +60,6 @@ def _clean_grant(raw_grant) -> Grant:
     )
 
 
-def clean_grants(raw_grants):
+def clean_grants(raw_grants: list[dict]) -> list[Grant]:
     """Clean a batch of raw grants and return their Grant models."""
     return [_clean_grant(grant) for grant in raw_grants]
