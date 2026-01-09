@@ -32,6 +32,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# VSCode
+.vscode/
+.DS_Store
+
 # Other
 deploy.sh
 invoke.sh
