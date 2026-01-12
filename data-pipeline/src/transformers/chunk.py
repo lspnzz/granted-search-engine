@@ -2,7 +2,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.models import Grant, GrantChunk
 
 
-def _chunk_grant(grant: Grant) -> list[GrantChunk]:
+def _chunk_grant(
+    grant: Grant, chunk_size: int = 2000, chunk_overlap: int = 200
+) -> list[GrantChunk]:
     """Chunk the grant description using LangChain, prefixing the title to the description."""
     grant_chunks = []
 
@@ -13,8 +15,8 @@ def _chunk_grant(grant: Grant) -> list[GrantChunk]:
     combined_text = f"{title}\n\n{description}"
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
-        chunk_overlap=200,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
         separators=["\n\n", "\n", ".", " "],
     )
 
@@ -39,11 +41,14 @@ def _chunk_grant(grant: Grant) -> list[GrantChunk]:
     return grant_chunks
 
 
-def chunk_grants(cleaned_grants: list[Grant]) -> list[GrantChunk]:
+def chunk_grants(
+    cleaned_grants: list[Grant], chunk_size: int = 2000, chunk_overlap: int = 200
+) -> list[GrantChunk]:
     """Chunk a list of cleaned grants into GrantChunk objects."""
     chunks = []
     for grant in cleaned_grants:
-        grant_chunks = _chunk_grant(grant)
+        grant_chunks = _chunk_grant(
+            grant, chunk_size=chunk_size, chunk_overlap=chunk_overlap
+        )
         chunks.extend(grant_chunks)
     return chunks
-    
