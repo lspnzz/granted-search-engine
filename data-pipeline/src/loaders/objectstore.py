@@ -11,6 +11,9 @@ PROCESSED_PREFIX = "processed/"
 RAW_EU_GRANTS_BUCKET_NAME = "raw-grants"
 RAW_GRANTS_KEY_SUFFIX = "_raw_grants.json"
 
+CLEAN_EU_GRANTS_BUCKET_NAME = "clean-grants"
+CLEAN_GRANTS_KEY_SUFFIX = "_clean_grants.json"
+
 EMBEDDED_EU_GRANT_CHUNKS_BUCKET_NAME = "embedded-grant-chunks"
 EMBEDDED_GRANT_CHUNKS_KEY_SUFFIX = "_embedded_grant_chunks.parquet"
 
@@ -53,6 +56,22 @@ def store_raw_grants(grants: list[Grant]) -> None:
     bucket_name = RAW_EU_GRANTS_BUCKET_NAME
     object_key = _get_raw_grants_object_key()
     _store_to_gcs(bucket_name, object_key, grants)
+
+
+def _get_clean_grants_object_key() -> str:
+    """Generate object key for clean grants based on current date."""
+    return (
+        INCOMING_PREFIX
+        + datetime.now(timezone.utc).strftime("%Y%m%d")
+        + CLEAN_GRANTS_KEY_SUFFIX
+    )
+
+
+def store_clean_grants(grants: list[Grant]) -> None:
+    bucket_name = CLEAN_EU_GRANTS_BUCKET_NAME
+    object_key = _get_clean_grants_object_key()
+    grants_data = [g.model_dump(mode="json") for g in grants]
+    _store_to_gcs(bucket_name, object_key, grants_data)
 
 
 def load_raw_grants(file_name: str) -> list[dict]:

@@ -2,7 +2,11 @@ import logging
 import functions_framework
 from pydantic import ValidationError
 from src.extractors.eu_grants_fetcher import fetch_grants
-from src.loaders.objectstore import store_raw_grants, load_raw_grants
+from src.loaders.objectstore import (
+    store_raw_grants,
+    load_raw_grants,
+    store_clean_grants,
+)
 from src.transformers.clean import clean_grants
 from src.transformers.chunk import chunk_grants
 from src.transformers.embed import embed_chunks
@@ -44,6 +48,7 @@ def run_pipeline(request):
 
         logger.info(f"Starting grants cleaning...")
         cleaned_grants = clean_grants(raw_grants)
+        store_clean_grants(cleaned_grants)
         logger.info(f"Grants cleaned: {len(cleaned_grants)}")
         chunks = chunk_grants(cleaned_grants)
         logger.info(f"Chunks created: {len(chunks)}")
