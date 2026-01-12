@@ -11,8 +11,10 @@ class Grant(BaseModel):
 class SearchRequest(BaseModel):
     pitch: str
     top_k: int | None = 10
-    pinecone_index_host: str | None = None
-    pinecone_namespace: str | None = None
+    model_name: str
+    dimensions: int
+    pinecone_index_name: str
+    pinecone_namespace: str
 
 
 class SearchResponse(BaseModel):
