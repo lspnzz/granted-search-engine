@@ -31,11 +31,26 @@ def run_pipeline(request):
 
     try:
         pipeline_req = PipelineRequest(**request_json)  # (LS): Validate with Pydantic
-        if not pipeline_req.pinecone_index_host or not pipeline_req.pinecone_namespace:
-            return ({"error": "Missing pinecone index or namespace"}, 400)
+        if (
+            not pipeline_req.pinecone_index_name
+            and not pipeline_req.pinecone_index_host
+        ):
+            return ({"error": "Missing pinecone index name (or host)"}, 400)
 
+        if not pipeline_req.pinecone_namespace:
+            return ({"error": "Missing pinecone namespace"}, 400)
+
+        # Config extraction
+        INDEX_NAME = pipeline_req.pinecone_index_name
+        # Fallback to host if name not provided (backward compatibility)
         INDEX_HOST = pipeline_req.pinecone_index_host
         NAMESPACE = pipeline_req.pinecone_namespace
+
+        CHUNK_SIZE = pipeline_req.chunk_size
+        CHUNK_OVERLAP = pipeline_req.chunk_overlap
+        MODEL_NAME = pipeline_req.model_name
+        DIMENSIONS = pipeline_req.dimensions
+
         grants_filename = pipeline_req.load_grants_from_file
 
         if grants_filename:
@@ -50,13 +65,23 @@ def run_pipeline(request):
         cleaned_grants = clean_grants(raw_grants)
         store_clean_grants(cleaned_grants)
         logger.info(f"Grants cleaned: {len(cleaned_grants)}")
-        chunks = chunk_grants(cleaned_grants)
+        chunks = chunk_grants(
+            cleaned_grants, chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+        )
         logger.info(f"Chunks created: {len(chunks)}")
-        embedded_chunks = embed_chunks(chunks)
+        embedded_chunks = embed_chunks(
+            chunks, model_name=MODEL_NAME, dimensions=DIMENSIONS
+        )
         logger.info(f"Chunks embedded: {len(embedded_chunks)}")
         # TODO(LS): Store embedded chunks to object store.
         # TODO(LS): Move raw grants to processed bucket.
-        upsert_chunks_to_pinecone(embedded_chunks, host=INDEX_HOST, namespace=NAMESPACE)
+        upsert_chunks_to_pinecone(
+            embedded_chunks,
+            index_name=INDEX_NAME,
+            namespace=NAMESPACE,
+            dimensions=DIMENSIONS,
+            host=INDEX_HOST,  # Pass host for backward compatibility if name is missing
+        )
         logger.info(f"Chunks upserted to Pinecone")
         # TODO(LS): Move embedded chunks to processed bucket.
         return "Pipeline completed successfully"

@@ -5,13 +5,14 @@ from src.models import GrantChunk
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EMBEDDING_MODEL = "text-embedding-3-small"
 BATCH_SIZE = 100
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-def embed_chunks(chunks: list[GrantChunk]) -> list[GrantChunk]:
+def embed_chunks(
+    chunks: list[GrantChunk], model_name: str, dimensions: int = 1536
+) -> list[GrantChunk]:
     """Return a list of GrantChunk with an 'embedding' field added."""
 
     texts = [chunk.text for chunk in chunks]
@@ -22,8 +23,7 @@ def embed_chunks(chunks: list[GrantChunk]) -> list[GrantChunk]:
 
         try:
             response = client.embeddings.create(
-                model=EMBEDDING_MODEL,
-                input=batch,
+                model=model_name, input=batch, dimensions=dimensions
             )
         except Exception as e:
             raise RuntimeError(

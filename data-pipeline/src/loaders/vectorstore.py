@@ -1,7 +1,8 @@
 import logging
 import os
+import time
 from dotenv import load_dotenv
-from pinecone import Pinecone
+from pinecone import Pinecone, ServerlessSpec, CloudProvider, AwsRegion, Metric
 from pydantic import BaseModel
 from typing import Any
 from src.models import GrantChunk
@@ -36,7 +37,47 @@ def _create_pinecone_chunk_record(chunk: GrantChunk) -> PineconeChunkRecord:
     )
 
 
-def upsert_chunks_to_pinecone(chunks: list[GrantChunk], host: str, namespace: str) -> None:
+def upsert_chunks_to_pinecone(
+    chunks: list[GrantChunk],
+    index_name: str | None,
+    namespace: str,
+    dimensions: int,
+    host: str | None = None,
+) -> None:
+
+    if index_name:
+        existing_indexes = [i.name for i in pc.list_indexes()]
+
+        if index_name not in existing_indexes:
+            logger.info(f"Creating new Pinecone index: {index_name}")
+            try:
+                pc.create_index(
+                    name=index_name,
+                    dimension=dimensions,
+                    metric=Metric.COSINE,
+                    spec=ServerlessSpec(
+                        cloud=CloudProvider.AWS,
+                        region=AwsRegion.US_EAST_1,  # (LS): Free tier defaults
+                    ),
+                )
+                # Wait for index to be ready
+                while not pc.describe_index(index_name).status.ready:
+                    time.sleep(1)
+
+                logger.info(f"Index {index_name} is ready.")
+            except Exception as e:
+                logger.error(f"Failed to create index {index_name}: {e}")
+                raise e
+
+        # Get host from index description if not provided or to ensure it matches
+        index_description = pc.describe_index(index_name)
+        host = index_description.host
+
+    if not host:
+        raise ValueError(
+            "No Pinecone host could be determined (neither provided nor found via index name)."
+        )
+
     index = pc.Index(host=host)
     BATCH_SIZE = 100
 

@@ -37,8 +37,14 @@ class GrantChunk(BaseModel):
 
 class PipelineRequest(BaseModel):
     load_grants_from_file: str | None = None
-    pinecone_index_host: str | None = None
+    pinecone_index_host: str | None = (
+        None  # Deprecated in favor of pinecone_index_name lookup
+    )
+    pinecone_index_name: str | None = None
     pinecone_namespace: str | None = None
 
-    # TODO(LS): Add chunk parameters
-    # TODO(LS): Add embedding parameters
+    # Configuration Parameters
+    model_name: str = "text-embedding-3-small"
+    dimensions: int = 1536
+    chunk_size: int = 2000
+    chunk_overlap: int = 200
