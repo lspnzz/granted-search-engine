@@ -6,14 +6,18 @@ from openai import OpenAI
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EMBEDDING_MODEL = "text-embedding-3-small"
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-def embed_pitch(pitch: str) -> List[float]:
+def embed_pitch(
+    pitch: str,
+    model: str,
+    dimensions: int,
+) -> List[float]:
     res = client.embeddings.create(
-        model=EMBEDDING_MODEL,
+        model=model,
         input=[pitch],
+        dimensions=dimensions,
     )
     return res.data[0].embedding

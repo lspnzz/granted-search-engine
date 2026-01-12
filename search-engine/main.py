@@ -22,14 +22,16 @@ def search_grants(request):
         search_req = SearchRequest(**request_json)  # (LS): Validate with Pydantic
         pitch = search_req.pitch
         top_k = search_req.top_k
-        index_host = search_req.pinecone_index_host
+        model_name = search_req.model_name
+        dimensions = search_req.dimensions
+        index_name = search_req.pinecone_index_name
         namespace = search_req.pinecone_namespace
 
-        embedded_pitch = embed_pitch(pitch)
+        embedded_pitch = embed_pitch(pitch, model=model_name, dimensions=dimensions)
         grants = query_grants(
             embedded_pitch,
             top_k=top_k,
-            host=index_host,
+            index_name=index_name,
             namespace=namespace,
         )
 
