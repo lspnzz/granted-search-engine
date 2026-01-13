@@ -1,13 +1,19 @@
 # Granted: Search Engine
 
-A serverless application that helps users find relevant EU grants based on their project pitches.
+A serverless application for semantic search over EU grants. It ingests grant data fetching from the European Commissions's Funding & Tenders Portal API, generates vector embeddings, and enables semantic search queries.
 
-## How it works
+## Architecture
 
-The application exposes an HTTP endpoint via Google Cloud Run Functions. It takes a project pitch as input, generates vector embeddings using OpenAI, and performs a semantic search against a Pinecone vector database to return the most relevant grants.
+The system consists of two main Google Cloud Run Functions:
 
+1.  **Data Pipeline** (`data-pipeline/`): An ETL pipeline that fetches raw grant data, cleans it, chunks it, embeds it using OpenAI embeddings, and indexes it into a Pinecone vector database.
+2.  **Search Engine** (`search-engine/`): An API endpoint that accepts a project pitch, generates embeddings, and queries the Pinecone database for relevant grants.
 
-## Environment setup (it's a shared environment for all services)
+## Local Development
+
+Prerequisites: Python 3.13+
+
+### Setup
 
 ```bash
 python3.13 -m venv .venv
@@ -16,50 +22,27 @@ pip install -r ./data-pipeline/requirements.txt
 pip install -r ./search-engine/requirements.txt
 ```
 
+## Configuration
 
-## Deploy to Google Cloud Run Functions (from the root directory)
+Both services are configured via JSON payloads.
 
-```bash
-gcloud run deploy granted-search-engine \
-    --source=./search-engine \
-    --function=search_grants \
-    --region=REGION \
-    --base-image=python313 \
-    --allow-unauthenticated \
-    --set-env-vars="EU_GRANT_CHUNKS_INDEX_HOST=your_eu_grants_index_host_here,EU_GRANT_CHUNKS_NAMESPACE=your_eu_grants_namespace_here," \
-    --set-secrets="PINECONE_API_KEY=projects/PROJECT_ID/secrets/PINECONE_API_KEY/versions/latest,OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest"
+### Data Pipeline Configuration (`/run_pipeline`)
 
-```
+Accepts a JSON body:
+- `pinecone_index_name`: Name of the Pinecone index.
+- `pinecone_namespace`: Namespace for the index.
+- `chunk_size`: Size of text chunks.
+- `chunk_overlap`: Overlap between chunks.
+- `model_name`: OpenAI embedding model name.
+- `dimensions`: Embedding dimensions.
+- `load_grants_from_file`: (Optional) Path to a local file to load grants from instead of fetching.
 
-```bash
-gcloud run deploy data-pipeline \
-    --source=./data-pipeline \
-    --function=run_pipeline \
-    --region=REGION \
-    --base-image=python313 \
-    --allow-unauthenticated \
-    --set-secrets="PINECONE_API_KEY=projects/PROJECT_ID/secrets/PINECONE_API_KEY/versions/latest,OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest"
-```
+### Search Engine Configuration (`/search_grants`)
 
-
-```bash
-gcloud run deploy granted-fetch-eu-grants \
-    --source=./data-fetcher \
-    --function=fetch_eu_grants \
-    --region=europe-west1 \
-    --base-image=python313 \
-    --allow-unauthenticated \
-    --set-env-vars="GCS_BUCKET_NAME=bucket-name"
-```
-
-
-```bash
-gcloud run deploy granted-process-grants \
-    --source=./data-processor \
-    --function=process_raw_grants \
-    --region=europe-west1 \
-    --base-image=python313 \
-    --allow-unauthenticated \
-    --set-env-vars="GCS_OUTPUT_BUCKET_NAME=bucket-name" \
-    --set-secrets="OPENAI_API_KEY=projects/PROJECT_ID/secrets/OPENAI_API_KEY/versions/latest"
-```
+Accepts a JSON body:
+- `pitch`: The project pitch description to search for.
+- `top_k`: Number of results to return.
+- `model_name`: OpenAI embedding model name.
+- `dimensions`: Embedding dimensions.
+- `pinecone_index_name`: Target Pinecone index.
+- `pinecone_namespace`: Target Pinecone namespace.
