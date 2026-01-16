@@ -46,3 +46,12 @@ Accepts a JSON body:
 - `dimensions`: Embedding dimensions.
 - `pinecone_index_name`: Target Pinecone index.
 - `pinecone_namespace`: Target Pinecone namespace.
+
+## License
+
+This project is licensed under the MIT License with the Commons Clause 1.0. 
+This means you are free to download, use, and modify the code for personal 
+use, but you are strictly prohibited from selling the software or using 
+it to provide a commercial service.
+
+See the [LICENSE](LICENSE) file for the full text.
