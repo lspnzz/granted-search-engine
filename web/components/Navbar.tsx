@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import styles from './Navbar.module.css';
 
+import { useMenu } from '../context/MenuContext';
+
 export default function Navbar() {
   const buttonRef = useRef<HTMLDivElement>(null);
   const topBarRef = useRef<HTMLDivElement>(null);
   const centerBarRef = useRef<HTMLDivElement>(null);
   const bottomBarRef = useRef<HTMLDivElement>(null);
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { menuOpen, toggleMenu } = useMenu();
 
   // Timelines
   const tlClosedHover = useRef<gsap.core.Timeline | null>(null);
@@ -60,17 +62,17 @@ export default function Navbar() {
     }
   };
 
-  const handleClick = () => {
-    const newState = !menuOpen;
-    setMenuOpen(newState);
-
-    if (newState) {
+  useEffect(() => {
+    if (menuOpen) {
       tlButtonClick.current?.play(0);
-      // Menu Reveal would go here if we had the menu wrapper
     } else {
       tlButtonClick.current?.reverse();
       tlOpenHover.current?.reverse();
     }
+  }, [menuOpen]);
+
+  const handleClick = () => {
+    toggleMenu();
   };
 
   return (
