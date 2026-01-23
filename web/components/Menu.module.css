@@ -1,0 +1,64 @@
+.menuWrapper {
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  background-color: var(--colors--menu-and-footer-bg);
+  position: relative;
+  z-index: 900;
+  /* Below navbar (1000) */
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.menu {
+  width: 100%;
+  padding-top: 6rem;
+  /* Space for navbar */
+  padding-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: var(--spacing--text-container-max-width);
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing--gap);
+  padding-right: var(--spacing--gap);
+}
+
+.isMenu {
+  flex: 1;
+}
+
+.menuColumn {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.menuContentWrapper {
+  color: var(--colors--text-light);
+  text-align: center;
+}
+
+.menuContentWrapper h3 {
+  margin-bottom: 2rem;
+  color: var(--colors--text-light);
+}
+
+.menuContentWrapper p {
+  margin-bottom: 0;
+}
+
+.menuContentWrapper a {
+  color: var(--colors--text-light);
+  text-decoration: underline;
+}
+
+.menuContentWrapper a:hover {
+  color: var(--colors--text-accent-tomato);
+}

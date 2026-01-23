@@ -2,6 +2,8 @@
   max-width: var(--spacing--less-than-ultra-wide-page-width);
   padding-top: var(--spacing--gap);
   padding-bottom: var(--spacing--gap);
+  padding-left: var(--spacing--gap);
+  padding-right: var(--spacing--gap);
   background-color: var(--colors--page-bg-color-light);
   width: 100%;
   height: 5rem;

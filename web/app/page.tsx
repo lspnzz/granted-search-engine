@@ -57,7 +57,12 @@ function SearchResults() {
   });
 
   async function handleSearch(pitch: string) {
-    if (!pitch.trim()) return;
+    if (!pitch.trim()) {
+      setGrants([]);
+      setSearched(false);
+      router.push('/', { scroll: false });
+      return;
+    }
 
     if (pitch !== query) {
       router.push(`/?q=${encodeURIComponent(pitch)}`, { scroll: false });
@@ -66,9 +71,13 @@ function SearchResults() {
     setLoading(true);
     setError('');
     setSearched(true);
+    setGrants([]);
 
     try {
-      const data = await searchGrants(pitch);
+      const [data] = await Promise.all([
+        searchGrants(pitch),
+        new Promise((resolve) => setTimeout(resolve, 500)) // Min 0.5s animation duration
+      ]);
       setGrants(data.grants);
     } catch (err) {
       console.error(err);
@@ -80,21 +89,24 @@ function SearchResults() {
 
   return (
     <>
-      <section className={`${styles.section} ${styles.atf}`} ref={containerRef}>
+      <section className={`${styles.section} ${styles.atf} ${grants.length === 0 ? styles.noResultsSection : ''}`} ref={containerRef}>
         <div className={styles.container}>
           <h1 className={styles.pageTitle} ref={titleRef}>
-            we design and develop beautiful software
+            Write down your project's pitch and find relevant EU grants
           </h1>
         </div>
 
         <div className={styles.ctaActionsWrapper}>
           <div className={styles.atfMainButtonWrapper}>
-            <div className={styles.dividerLine} ref={dividerRef}></div>
+            <div className={`${styles.dividerLine} ${loading ? styles.loadingDivider : ''}`} ref={dividerRef}>
+              <div className={styles.dividerProgress}></div>
+            </div>
             <div className={styles.searchContainer} ref={searchContainerRef}>
               <SearchBar
                 initialValue={query || ''}
                 onSearch={handleSearch}
                 isLoading={loading}
+                hasResults={grants.length > 0}
               />
             </div>
           </div>
@@ -103,33 +115,23 @@ function SearchResults() {
         <div className={styles.resultsSection}>
           {error && <div className={styles.errorBox}>{error}</div>}
 
-          <div className={styles.card}>
-            {searched ? (
+          <div className={`${styles.card} ${(grants.length === 0 && !loading) ? styles.hiddenCard : ''}`}>
+            {grants.length > 0 && (
               <div className={styles.resultsGrid}>
                 {grants.map((grant, i) => (
-                  <GrantCard key={i} grant={grant} />
+                  <GrantCard
+                    key={i}
+                    grant={grant}
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                  />
                 ))}
-                {grants.length === 0 && !loading && (
-                  <div className={styles.emptyState}>
-                    No results found. Try a different query.
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className={styles.emptyState}>
-                <h3>Ready to search?</h3>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      <div className={`${styles.ultraWideText} ${styles.isLeft}`}>
-        <p><strong>Wow this is a very wide screen...</strong></p>
-      </div>
-      <div className={`${styles.ultraWideText} ${styles.isRight}`}>
-        <p><strong>Sometimes I really wonder why...</strong></p>
-      </div>
+
     </>
   );
 }

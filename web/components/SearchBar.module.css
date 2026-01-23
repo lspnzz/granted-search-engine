@@ -1,87 +1,119 @@
+/* .container stays centered */
 .container {
-  position: relative;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
 .inputWrapper {
+  /* Layout: Flexbox */
   position: relative;
-  width: 100%;
+  width: 40rem;
+  max-width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  /* Ensure button stays at top when growing */
+
+  /* Visuals moved from .input to this wrapper */
+  background-color: var(--white);
+
+  /* Shadow logic */
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+
+  border: 1px solid var(--colors--text-accent-tomato);
+
+  /* "Match roundness": Button (2rem, r=1rem) + padding ~0.75rem. 
+     The user explicitly asked to "match the button". 
+     The button has radius 50% (circle).
+     A pill shape for the parent is the natural match. 
+     If we want 'match', we likely just want a pill shape, so 1.75rem or 2rem is safe. */
+  border-radius: 1.75rem;
+
+  transition: box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.2s ease;
 }
 
-/* Matching the .button.is-primary.is-highlighted style */
-.input {
-  width: 100%;
-  background-color: var(--colors--button-bg);
-  /* The shadow for the "button" look */
-  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
-  border: 1px solid var(--colors--text-accent-tomato);
-  border-radius: 2rem;
-  /* Pill shape */
+.inputWrapper.hasResults {
+  border-color: var(--colors--divider-light);
+}
 
-  padding: 1rem 1.75rem;
-  /* Match button padding */
-  padding-right: 3.5rem;
-  /* Space for search icon */
+/* Textarea input becomes a flexible, transparent child */
+.input {
+  flex: 1;
+  /* Takes up remaining space */
+  width: 100%;
+  min-height: 3.5rem;
+  /* Maintains initial pill visual */
+
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+
+  padding: 1rem 0 1rem 1.75rem;
+  /* Left padding for pill shape, Right padding handled by button margin */
 
   font-family: var(--fonts--body-family);
-  font-size: 0.9375rem;
+  font-size: 1.125rem;
   letter-spacing: 0.05em;
-  /* Slightly less than button for readability */
   color: var(--colors--text-dark);
-  text-transform: none;
-  /* Input text normal case */
-  transition: box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  outline: none;
+
+  resize: none;
+  overflow: hidden;
 }
 
-.input:hover {
+/* Hover/Focus states now apply to the wrapper */
+.inputWrapper:hover,
+.inputWrapper:has(.input:focus) {
+  border-color: var(--colors--text-accent-tomato);
   box-shadow: -2px -2px 4px 0 var(--colors--shadow-light), 2px 2px 4px 0 var(--colors--shadow-dark);
 }
 
-.input:focus {
-  box-shadow: -2px -2px 4px 0 var(--colors--shadow-light), 2px 2px 4px 0 var(--colors--shadow-dark);
-  /* outline-color: var(--colors--focus-highlight); in global */
+/* Hover over the button makes the wrapper's border transparent */
+.inputWrapper:has(.searchButton:hover) {
+  border-color: transparent;
 }
 
 .input::placeholder {
-  color: var(--colors--text-caption);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  color: var(--colors--text-dark);
   opacity: 0.7;
 }
 
 .searchButton {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
+  /* Flex positioning instead of absolute */
+  position: static;
+  flex-shrink: 0;
+
+  margin-top: 0.43rem;
+  /* Align with top line of text */
+  margin-right: 0.5rem;
+  /* Gap to right edge */
+  margin-left: 1rem;
+  /* Gap from text */
+
+  background-color: var(--colors--text-dark);
+
+  /* Border transition logic */
+  border: 1px solid transparent;
+
   cursor: pointer;
-  color: var(--colors--text-accent-tomato);
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--colors--text-caption);
-  border-top-color: var(--colors--text-accent-tomato);
+  /* Sizing */
+  width: 2.5rem;
+  height: 2.5rem;
+
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  transition: border-color 0.2s ease;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.searchButton:hover {
+  border-color: var(--colors--text-accent-tomato);
 }
 
 .helpText {
-  /* Hiding help text to stay cleaner / closer to reference design */
   display: none;
 }

@@ -1,116 +1,214 @@
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* 
+ * The outer container now acts as a transparent wrapper 
+ * The "Card" look is applied to .mainContent
+ */
 .card {
   display: flex;
   flex-direction: column;
-  background-color: var(--white);
-  border-radius: 1rem;
-  padding: 2rem;
-  gap: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid var(--colors--divider-light);
-  /* Similar to reference simple card style */
+  gap: 4px;
+  width: 100%;
+  padding: 8px;
+  padding-bottom: 16px;
+  /* Add padding so the background change is visible around text */
+  border-radius: 20px;
+  /* Slightly larger radius than content */
+  transition: background-color 0.2s, box-shadow 0.2s, opacity 0.4s ease;
+  /* Transition for the "rest of card" bg */
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  cursor: pointer;
+  /* Suggest interactivity */
+  height: 100%;
+  /* Ensure card fills the grid row */
 }
 
+/* On hover, the wrapper turns white, matching the highlighted block */
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  background-color: var(--white);
+  /* Apply the same shadow to the outer card on hover */
+  box-shadow:
+    0px 8px 8px -4px rgba(9, 9, 11, 0.06),
+    0px 4px 4px -2px rgba(9, 9, 11, 0.03),
+    0px 2px 2px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -0.5px rgba(9, 9, 11, 0.03),
+    0px 0px 0px 1px rgba(9, 9, 11, 0.03);
 }
 
-.header {
+.card:hover .mainContent {
+  /* Raise effect */
+  transform: translateY(-2px);
+  /* Accent border */
+  border-color: var(--colors--text-accent-tomato);
+  /* Raised shadow */
+  box-shadow:
+    0px 12px 16px -4px rgba(9, 9, 11, 0.08),
+    0px 4px 6px -2px rgba(9, 9, 11, 0.04),
+    0px 0px 0px 1px rgba(255, 89, 74, 0.1);
+}
+
+/* 
+ * MAIN CONTENT BOX 
+ * This is now the visual "Card"
+ */
+.mainContent {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.metaRow {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-  color: var(--colors--text-caption);
+  /* Push footer to bottom */
+  flex: 1;
+  /* Take up available space */
+  gap: 21px;
+  /* Gap between "Title/Desc" and "Footer" */
+  padding: 16px;
+  background-color: var(--white);
+
+  /* Default border is divider color */
+  border: 1px solid var(--colors--divider-light);
+  border-radius: 16px;
+
+  /* shadow-perfect from Figma */
+  box-shadow:
+    0px 8px 8px -4px rgba(9, 9, 11, 0.06),
+    0px 4px 4px -2px rgba(9, 9, 11, 0.03),
+    0px 2px 2px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -0.5px rgba(9, 9, 11, 0.03),
+    0px 0px 0px 1px rgba(9, 9, 11, 0.03);
+
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+
+  /* 
+   * Enforce a minimum height for the card visual block 
+   * This ensures cards align roughly even with short content,
+   * without forcing a gap between title and description.
+   * Approx calculation: Title(3 lines) + Desc(3 lines) + Footer + Gaps + Padding 
+   */
+  min-height: 226px;
 }
 
-.statusBadge {
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  font-size: 0.75rem;
-}
-
-.matchScore {
-  color: var(--colors--text-accent-tomato);
-  font-weight: 700;
+.headerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .title {
   font-family: var(--fonts--headings);
-  font-size: 1.5rem;
-  line-height: 1.2;
-  font-weight: 700;
-  color: var(--colors--text-dark);
+  /* 'Outfit' fallback */
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0em;
+  line-height: 1.6;
+  color: var(--black);
   margin: 0;
-}
 
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .description {
-  color: var(--colors--text-dark);
-  font-size: 1rem;
+  font-size: 14px;
   line-height: 1.6;
-  opacity: 0.9;
+  color: var(--colors--text-caption);
+  /* #6e6e73 matches approx #525252 visually or use existing caption color */
+  margin: 0;
+
+  /* Clamp to 3 lines */
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 0;
 }
 
-.gridMeta {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--colors--divider-light);
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-.metaItem {
+.sourceLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--colors--text-caption);
+  font-size: 12px;
+  /* Matches Figma small text visually */
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+.matchScore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--colors--text-caption);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.icon {
+  color: var(--colors--text-accent-tomato);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 
+ * META DATA LIST 
+ * Displays below the main card context
+ */
+.metaList {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 8px;
+  /* Spacing between rows */
+  padding: 0 16px;
+  /* Align visually with card padding */
+  margin-top: 8px;
 }
 
-.metaLabel {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.metaLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: var(--colors--text-caption);
+  font-weight: 500;
 }
 
 .metaValue {
   font-family: var(--fonts--headings);
-  font-size: 1.125rem;
-  font-weight: 700;
-}
-
-.footer {
-  margin-top: auto;
-  padding-top: 1rem;
-}
-
-.link {
-  display: inline-block;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--colors--text-accent-tomato);
-  transition: opacity 0.2s;
-}
-
-.link:hover {
-  text-decoration: underline;
-  opacity: 0.8;
+  font-weight: 500;
+  color: var(--colors--text-caption);
+  /* Approx #262626 */
+  text-align: right;
 }
