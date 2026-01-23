@@ -1,0 +1,76 @@
+.navbar {
+  max-width: var(--spacing--less-than-ultra-wide-page-width);
+  padding-top: var(--spacing--gap);
+  padding-bottom: var(--spacing--gap);
+  background-color: var(--colors--page-bg-color-light);
+  width: 100%;
+  height: 5rem;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1000;
+}
+
+.navbarContent {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: calc(50% + 0.75rem);
+  margin-left: auto;
+  position: relative;
+}
+
+.navbarLogo {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.navbarDividerWrapper {
+  width: 100%;
+  position: relative;
+}
+
+.dividerLine {
+  background-color: var(--colors--divider-light);
+  height: 1px;
+  box-shadow: 0 1px #fff;
+}
+
+.isNavbar {
+  z-index: 0;
+  width: auto;
+  margin: 0 var(--spacing--gap-halved) 0 var(--spacing--gap);
+  position: relative;
+  transform-origin: 100%;
+}
+
+.buttonMenu {
+  z-index: 1;
+  grid-row-gap: 3px;
+  background-color: var(--colors--button-bg);
+  cursor: pointer;
+  border-radius: 100%;
+  flex-direction: column;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: 3rem;
+  transition: box-shadow 0.5s;
+  display: flex;
+  position: relative;
+}
+
+.buttonMenu:hover {
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+}
+
+.buttonMenu:active {
+  box-shadow: -4px -4px 4px 0 var(--colors--shadow-light), 4px 4px 4px 0 var(--colors--shadow-dark);
+}
+
+.buttonMenuBar {
+  background-color: var(--purplish-black);
+  width: 24px;
+  height: 2px;
+}

@@ -1,0 +1,25 @@
+.footerWrapper {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--colors--menu-and-footer-bg);
+}
+
+.footer {
+  z-index: 0;
+  color: var(--colors--text-light);
+  text-align: center;
+}
+
+.sectionHeadingSupportingText {
+  padding-top: var(--spacing--paragraph-spacing);
+  padding-bottom: 2.25rem;
+}
+
+.footerContentWrapper {
+  font-size: 0.9375rem;
+  line-height: 130%;
+}
+
+.lastParagraph {
+  margin-bottom: 0;
+}

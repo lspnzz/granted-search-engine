@@ -1,0 +1,87 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Matching the .button.is-primary.is-highlighted style */
+.input {
+  width: 100%;
+  background-color: var(--colors--button-bg);
+  /* The shadow for the "button" look */
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+  border: 1px solid var(--colors--text-accent-tomato);
+  border-radius: 2rem;
+  /* Pill shape */
+
+  padding: 1rem 1.75rem;
+  /* Match button padding */
+  padding-right: 3.5rem;
+  /* Space for search icon */
+
+  font-family: var(--fonts--body-family);
+  font-size: 0.9375rem;
+  letter-spacing: 0.05em;
+  /* Slightly less than button for readability */
+  color: var(--colors--text-dark);
+  text-transform: none;
+  /* Input text normal case */
+  transition: box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  outline: none;
+}
+
+.input:hover {
+  box-shadow: -2px -2px 4px 0 var(--colors--shadow-light), 2px 2px 4px 0 var(--colors--shadow-dark);
+}
+
+.input:focus {
+  box-shadow: -2px -2px 4px 0 var(--colors--shadow-light), 2px 2px 4px 0 var(--colors--shadow-dark);
+  /* outline-color: var(--colors--focus-highlight); in global */
+}
+
+.input::placeholder {
+  color: var(--colors--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.searchButton {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--colors--text-accent-tomato);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--colors--text-caption);
+  border-top-color: var(--colors--text-accent-tomato);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.helpText {
+  /* Hiding help text to stay cleaner / closer to reference design */
+  display: none;
+}
