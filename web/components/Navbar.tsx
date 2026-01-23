@@ -1,0 +1,109 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import styles from './Navbar.module.css';
+
+export default function Navbar() {
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const topBarRef = useRef<HTMLDivElement>(null);
+  const centerBarRef = useRef<HTMLDivElement>(null);
+  const bottomBarRef = useRef<HTMLDivElement>(null);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Timelines
+  const tlClosedHover = useRef<gsap.core.Timeline | null>(null);
+  const tlOpenHover = useRef<gsap.core.Timeline | null>(null);
+  const tlButtonClick = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    // Animation Config
+    const hoverDuration = 0.5;
+    const clickDuration = 1.5;
+    const hoverEase = "power1.out"; // "ease" equivalent
+    const clickEase = "expo.inOut";
+
+    // Build Timelines
+    tlClosedHover.current = gsap.timeline({ paused: true, defaults: { duration: hoverDuration, ease: hoverEase } })
+      .to(topBarRef.current, { y: 5 }, 0)
+      .to(bottomBarRef.current, { y: -5 }, 0)
+      .to(centerBarRef.current, { rotation: 90 }, 0);
+
+    tlOpenHover.current = gsap.timeline({ paused: true, defaults: { duration: hoverDuration, ease: hoverEase } })
+      .to([topBarRef.current, bottomBarRef.current], { rotation: -45 }, 0)
+      .to(centerBarRef.current, { rotation: 135 }, 0);
+
+    tlButtonClick.current = gsap.timeline({ paused: true, defaults: { duration: clickDuration, ease: clickEase } })
+      .to(buttonRef.current, { rotation: 45 });
+
+    return () => {
+      tlClosedHover.current?.kill();
+      tlOpenHover.current?.kill();
+      tlButtonClick.current?.kill();
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!menuOpen) {
+      tlClosedHover.current?.play();
+    } else {
+      tlOpenHover.current?.play();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!menuOpen) {
+      tlClosedHover.current?.reverse();
+    } else {
+      tlOpenHover.current?.reverse();
+    }
+  };
+
+  const handleClick = () => {
+    const newState = !menuOpen;
+    setMenuOpen(newState);
+
+    if (newState) {
+      tlButtonClick.current?.play(0);
+      // Menu Reveal would go here if we had the menu wrapper
+    } else {
+      tlButtonClick.current?.reverse();
+      tlOpenHover.current?.reverse();
+    }
+  };
+
+  return (
+    <div id="top-of-the-page" className={styles.navbar}>
+      <div className="w-layout-blockcontainer container w-container">
+        <div className={styles.navbarContent}>
+          {/* Logo */}
+          <img
+            src="https://cdn.prod.website-files.com/696e5245549ee3d272664285/696e5245549ee3d272664272_studio-quinto-logo-dark.svg"
+            loading="lazy"
+            id="navbar-logo"
+            alt="Studio Quinto"
+            className={styles.navbarLogo}
+          />
+
+          <div className={styles.navbarDividerWrapper}>
+            <div id="navbar-divider" className={`${styles.dividerLine} ${styles.isNavbar}`}></div>
+          </div>
+
+          <div
+            id="button-menu"
+            className={styles.buttonMenu}
+            ref={buttonRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleClick}
+          >
+            <div ref={topBarRef} className={`${styles.buttonMenuBar} ${styles.isTopBar}`}></div>
+            <div ref={centerBarRef} className={`${styles.buttonMenuBar} ${styles.isCenterBar}`}></div>
+            <div ref={bottomBarRef} className={`${styles.buttonMenuBar} ${styles.isBottomBar}`}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
