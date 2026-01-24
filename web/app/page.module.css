@@ -6,6 +6,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  /* Force top alignment */
 }
 
 .atf {
@@ -17,7 +19,8 @@
 
 .noResultsSection {
   min-height: 100vh;
-  justify-content: center;
+  justify-content: flex-start !important;
+  /* Force top alignment */
   padding-bottom: 5vh;
   /* Push content slightly up for visual balance */
 }
