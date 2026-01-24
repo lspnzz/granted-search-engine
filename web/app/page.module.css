@@ -149,12 +149,16 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing--gap);
   width: 100%;
+  align-items: start;
 }
 
-/* Dim other cards when one is hovered */
-.resultsGrid:has(> *:hover)>*:not(:hover) {
+/* Dim other cards when one is expanded */
+/* Optimized for performance: replaced :has() with direct class toggle */
+.hasExpanded>*:not([data-expanded="true"]) {
   opacity: 0.1;
+  pointer-events: none;
 }
+
 
 .emptyState {
   text-align: center;

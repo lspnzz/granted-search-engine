@@ -60,7 +60,7 @@ html {
 }
 
 body {
-  background-color: var(--colors--page-bg-color-light);
+  background-color: var(--colors--menu-and-footer-bg);
   color: var(--colors--text-dark);
   font-family: var(--fonts--body-family);
   font-size: 1.25rem;
@@ -126,4 +126,14 @@ button {
 input,
 textarea {
   caret-color: var(--colors--text-accent-tomato);
+}
+
+.main-wrapper {
+  position: relative;
+  z-index: 2;
+  background-color: var(--colors--page-bg-color-light);
+  min-height: 100vh;
+  border-bottom-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }

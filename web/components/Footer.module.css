@@ -1,7 +1,15 @@
 .footerWrapper {
-  position: relative;
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
   overflow: hidden;
   background-color: var(--colors--menu-and-footer-bg);
+  height: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 1rem;
 }
 
 .footer {
@@ -11,12 +19,12 @@
 }
 
 .sectionHeadingSupportingText {
-  padding-top: var(--spacing--paragraph-spacing);
-  padding-bottom: 2.25rem;
+  padding-top: 1.75rem;
+  padding-bottom: 1rem;
 }
 
 .footerContentWrapper {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 130%;
 }
 

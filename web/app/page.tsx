@@ -24,6 +24,43 @@ function SearchResults() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Expanded Card State
+  const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
+
+  // Click Outside Handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // If we have an expanded card, check if the click target is within a card
+      if (expandedCardId !== null) {
+        const target = event.target as HTMLElement;
+        // If click is NOT inside a .card, collapse all
+        // We assume the Card component will have a class containing 'card' or similar, 
+        // but checking closest is safer if we know the selector. 
+        // Alternatively, we can rely on bubble propagation: 
+        // If the card itself handles its click, it can stopPropagation if needed, 
+        // OR we just check if the click path includes the expanded card.
+        // A simple "click anywhere on document resets state" unless stopped is good,
+        // but 'GrantCard' click will bubble here. 
+        // So we might need to handle this carefully.
+
+        // Simpler approach: 
+        // The GrantCard onClick sets the state. 
+        // This global listener resets it IF the click didn't originate from an expanded card interactable.
+        // Actually, if I click another card, that card's handler fires.
+        // If I click empty space, this fires.
+        // We can just check `!target.closest('.grant-card-interactive')` if we add that class.
+
+        if (!target.closest('[data-card-id]')) {
+          setExpandedCardId(null);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [expandedCardId]);
+
+
   // Page Load Animation
   useEffect(() => {
     // Only run on initial mount (roughly equivalent to page load logic)
@@ -50,16 +87,17 @@ function SearchResults() {
   }, []);
 
   // Effect to handle URL query changes
-  useState(() => {
+  useEffect(() => {
     if (query) {
       handleSearch(query);
     }
-  });
+  }, [query]); // Added query to dependency array to re-run if query changes
 
   async function handleSearch(pitch: string) {
     if (!pitch.trim()) {
       setGrants([]);
       setSearched(false);
+      setExpandedCardId(null); // Reset on clear
       router.push('/', { scroll: false });
       return;
     }
@@ -72,6 +110,7 @@ function SearchResults() {
     setError('');
     setSearched(true);
     setGrants([]);
+    setExpandedCardId(null); // Reset on new search
 
     try {
       const [data] = await Promise.all([
@@ -117,12 +156,22 @@ function SearchResults() {
 
           <div className={`${styles.card} ${(grants.length === 0 && !loading) ? styles.hiddenCard : ''}`}>
             {grants.length > 0 && (
-              <div className={styles.resultsGrid}>
+              <div className={`${styles.resultsGrid} ${expandedCardId !== null ? styles.hasExpanded : ''}`}>
                 {grants.map((grant, i) => (
                   <GrantCard
                     key={i}
                     grant={grant}
                     style={{ animationDelay: `${i * 0.1}s` }}
+                    isExpanded={expandedCardId === i}
+                    onClick={(e) => {
+                      // Stop propagation so the document listener doesn't immediately close it
+                      // if we are clicking TO open. 
+                      // Actually, React events propagate to document listeners.
+                      // We can use e.stopPropagation() here to prevent the document listener from firing
+                      // for THIS click.
+                      e.stopPropagation();
+                      setExpandedCardId(expandedCardId === i ? null : i);
+                    }}
                   />
                 ))}
               </div>
