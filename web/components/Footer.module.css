@@ -26,6 +26,10 @@
 .footerContentWrapper {
   font-size: 1rem;
   line-height: 130%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .lastParagraph {

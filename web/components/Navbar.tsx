@@ -81,7 +81,7 @@ export default function Navbar() {
         <div className={styles.navbarContent}>
           {/* Logo */}
           <img
-            src="https://cdn.prod.website-files.com/696e5245549ee3d272664285/696e5245549ee3d272664272_studio-quinto-logo-dark.svg"
+            src="studio-quinto-logo.svg"
             loading="lazy"
             id="navbar-logo"
             alt="Studio Quinto"
