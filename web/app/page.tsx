@@ -128,7 +128,7 @@ function SearchResults() {
 
   return (
     <>
-      <section className={`${styles.section} ${styles.atf} ${grants.length === 0 ? styles.noResultsSection : ''}`} ref={containerRef}>
+      <section className={`${styles.section} ${styles.atf}`} ref={containerRef}>
         <div className={styles.container}>
           <h1 className={styles.pageTitle} ref={titleRef}>
             Write down your project's pitch and find relevant EU grants
@@ -163,6 +163,7 @@ function SearchResults() {
                     grant={grant}
                     style={{ animationDelay: `${i * 0.1}s` }}
                     isExpanded={expandedCardId === i}
+                    isDimmed={expandedCardId !== null && expandedCardId !== i}
                     onClick={(e) => {
                       // Stop propagation so the document listener doesn't immediately close it
                       // if we are clicking TO open. 

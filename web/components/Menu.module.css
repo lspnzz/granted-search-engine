@@ -42,7 +42,7 @@
 
 .menuContentWrapper {
   color: var(--colors--text-light);
-  text-align: center;
+  text-align: left;
 }
 
 .menuContentWrapper h3 {

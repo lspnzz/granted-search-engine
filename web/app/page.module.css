@@ -11,18 +11,10 @@
 }
 
 .atf {
-  padding-top: 8rem;
+  padding-top: 22vh;
   /* Desktop default from reference */
   padding-bottom: 8rem;
   min-height: 80vh;
-}
-
-.noResultsSection {
-  min-height: 100vh;
-  justify-content: flex-start !important;
-  /* Force top alignment */
-  padding-bottom: 5vh;
-  /* Push content slightly up for visual balance */
 }
 
 .container {

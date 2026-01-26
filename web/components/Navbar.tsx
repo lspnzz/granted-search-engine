@@ -77,32 +77,29 @@ export default function Navbar() {
 
   return (
     <div id="top-of-the-page" className={styles.navbar}>
-      <div className="w-layout-blockcontainer container w-container">
+      <div className={`w-layout-blockcontainer container w-container ${styles.navbarContainer}`}>
         <div className={styles.navbarContent}>
           {/* Logo */}
-          <img
-            src="studio-quinto-logo.svg"
-            loading="lazy"
-            id="navbar-logo"
-            alt="Studio Quinto"
-            className={styles.navbarLogo}
-          />
+          {/* Logo */}
+          <div className={styles.navbarTitle}>GRANTED</div>
 
-          <div className={styles.navbarDividerWrapper}>
-            <div id="navbar-divider" className={`${styles.dividerLine} ${styles.isNavbar}`}></div>
-          </div>
+          <div className={styles.navbarRightSide}>
+            <div className={styles.navbarDividerWrapper}>
+              <div id="navbar-divider" className={`${styles.dividerLine} ${styles.isNavbar}`}></div>
+            </div>
 
-          <div
-            id="button-menu"
-            className={styles.buttonMenu}
-            ref={buttonRef}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleClick}
-          >
-            <div ref={topBarRef} className={`${styles.buttonMenuBar} ${styles.isTopBar}`}></div>
-            <div ref={centerBarRef} className={`${styles.buttonMenuBar} ${styles.isCenterBar}`}></div>
-            <div ref={bottomBarRef} className={`${styles.buttonMenuBar} ${styles.isBottomBar}`}></div>
+            <div
+              id="button-menu"
+              className={styles.buttonMenu}
+              ref={buttonRef}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onClick={handleClick}
+            >
+              <div ref={topBarRef} className={`${styles.buttonMenuBar} ${styles.isTopBar}`}></div>
+              <div ref={centerBarRef} className={`${styles.buttonMenuBar} ${styles.isCenterBar}`}></div>
+              <div ref={bottomBarRef} className={`${styles.buttonMenuBar} ${styles.isBottomBar}`}></div>
+            </div>
           </div>
         </div>
       </div>

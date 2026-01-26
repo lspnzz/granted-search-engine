@@ -41,18 +41,19 @@ export default function Menu() {
         <div className={styles.container}>
           <div className={styles.menuColumn}>
             <div className={styles.menuContentWrapper}>
-              <h3>Did you really think this was a menu? 😎</h3>
+              <h3>Did you really think this was a menu? 😏</h3>
               <p>
-                Sorry, nothing to see here yet. If you're curious about what we do send us a message at{' '}
-                <a href="mailto:hello@quinto.studio?subject=I've%20been%20fooled%20by%20your%20menu">
-                  hello@quinto.studio
+                <b style={{ color: 'tomato' }}>While we have your attention:</b> Granted is currently an engineering excercise.
+                If you care about what it does and would like to pay for a proper product, please reach out to{' '}
+                <a href="mailto:takemymoney@grantedsearch.eu?subject=I'd like to pay for a proper product">
+                  takemymoney@grantedsearch.eu
                 </a>
-                . We may or may not decide to tell you.
+                . We have big plans for this, but we may or may not decide to work on it. No pressure, but it all depends on <s>your wallet</s> you.
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

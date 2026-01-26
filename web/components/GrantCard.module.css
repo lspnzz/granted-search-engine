@@ -23,8 +23,7 @@
   background-color: transparent;
   box-shadow: none;
 
-  transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-    box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Transition removed for GSAP control */
 
   animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   cursor: pointer;
@@ -210,11 +209,7 @@
   /* Behind mainContent */
   position: relative;
 
-  transition:
-    grid-template-rows 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-    margin-top 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-    opacity 0.4s ease;
+  /* Transitions removed for GSAP control */
 
   /* Ensure mask/overflow doesn't clip shadow of mainContent, but we need to hide this */
   /* Actually since it's behind mainContent (with solid bg), we don't strictly need overflow hidden 
@@ -288,12 +283,7 @@
 
   z-index: 0;
 
-  transition:
-    max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
-    opacity 0.4s ease,
-    margin-top 0.4s ease,
-    padding 0.4s ease;
+  /* Transitions removed for GSAP control */
 }
 
 .card.expanded .metaList {
@@ -318,7 +308,7 @@
   /* Base transition for opacity/transform if we want them to slide in individually too */
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  /* Transition removed for GSAP control */
 }
 
 .card.expanded .metaRow {
