@@ -32,7 +32,7 @@
   text-align: center;
   letter-spacing: 0.175em;
   text-transform: uppercase;
-  font-size: 2rem;
+  font-size: var(--heading-1-size);
   line-height: 180%;
   max-width: 48rem;
   margin-left: auto;
@@ -135,6 +135,7 @@
   box-shadow: none;
   padding: 0;
   pointer-events: none;
+  min-height: 0;
 }
 
 /* Side Shadows / Glow Effect removed as per user request */
@@ -170,7 +171,7 @@
 @media screen and (max-width: 991px) {
   .pageTitle {
     width: 100%;
-    font-size: 1.75rem;
+    /* font-size handled by globals variable */
     letter-spacing: 0.15em;
   }
 
@@ -178,16 +179,47 @@
     margin-left: 0;
     margin-right: 0;
     padding: 2rem;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
   }
 
   .atf {
-    padding-top: 3rem;
+    padding-top: 15vh;
     padding-bottom: 3rem;
   }
 
   .ctaActionsWrapper {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .resultsGrid {
+    grid-template-columns: 1fr;
+    /* Force single column on tablet/mobile */
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .atf {
+    padding-top: 6rem;
+    min-height: auto;
+  }
+
+  .card {
+    padding: 1.5rem 1rem;
+    border-radius: 1.25rem;
+  }
+
+  .searchContainer {
+    max-width: none;
+    width: 100%;
+    padding: 0 var(--spacing--gap);
+  }
+
+  .dividerLine {
+    width: 80%;
+  }
+
+  .emptyState {
+    padding: 2rem;
   }
 }

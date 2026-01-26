@@ -16,8 +16,14 @@
   padding-top: 6rem;
   /* Space for navbar */
   padding-bottom: 4rem;
-  display: flex;
   flex-direction: column;
+}
+
+@media screen and (max-width: 767px) {
+  .menu {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
 }
 
 .container {
