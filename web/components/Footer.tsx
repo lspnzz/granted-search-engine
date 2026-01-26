@@ -10,7 +10,7 @@ export default function Footer() {
         <section className={styles.sectionHeadingSupportingText}>
           <div className="container is-text is-menu-and-footer">
             <div className={styles.footerContentWrapper}>
-              <p className={styles.lastParagraph}>By using this app you unequivocally agree to our <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy & Cookie Policy</Link>.</p>
+              <p className={styles.lastParagraph}>By using this app you shrug and unenthusiastically agree to our <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy & Cookie Policy</Link>.</p>
               <p className={styles.lastParagraph}>© 2026, Studio Quinto.</p>
             </div>
           </div>

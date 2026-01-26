@@ -119,6 +119,13 @@
   box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
 }
 
+/* Mobile Adjustments */
+@media screen and (max-width: 767px) {
+  .searchButton {
+    margin-left: 0.5rem;
+  }
+}
+
 .helpText {
   display: none;
 }
