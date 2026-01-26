@@ -1,0 +1,225 @@
+/* Page Structure */
+.section {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* Force top alignment */
+}
+
+.atf {
+  padding-top: 22vh;
+  /* Desktop default from reference */
+  padding-bottom: 8rem;
+  min-height: 80vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--spacing--less-than-ultra-wide-page-width);
+  /* 1920px */
+  padding-left: var(--spacing--gap);
+  padding-right: var(--spacing--gap);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pageTitle {
+  font-family: var(--fonts--headings-display);
+  text-align: center;
+  letter-spacing: 0.175em;
+  text-transform: uppercase;
+  font-size: var(--heading-1-size);
+  line-height: 180%;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* CTA / Search Section */
+.ctaActionsWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  gap: var(--spacing--gap);
+  width: 100%;
+}
+
+.atfMainButtonWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.dividerLine {
+  background-color: var(--colors--divider-light);
+  height: 1px;
+  box-shadow: 0 1px #fff;
+  width: 50%;
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+  /* Ensure progress bar stays within the line (or remove if we want it to go beyond, but 'turning accent' implies coloring the line) */
+}
+
+.dividerProgress {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  /* Start from the right side of the divider (next to search bar) */
+  height: 100%;
+  width: 0;
+  background-color: var(--colors--text-accent-tomato);
+  opacity: 0;
+}
+
+.loadingDivider .dividerProgress {
+  animation: fillDivider 0.5s ease-out forwards;
+}
+
+@keyframes fillDivider {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+
+  100% {
+    width: 100%;
+    /* Fills the divider line to the left edge */
+    opacity: 1;
+  }
+}
+
+/* Search Bar (replacing the button) */
+.searchContainer {
+  z-index: 10;
+  width: 100%;
+  max-width: 400px;
+}
+
+.resultsSection {
+  width: 100%;
+  max-width: var(--spacing--less-than-ultra-wide-page-width);
+  margin-top: 2rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--colors--card-bg);
+  /* Travertine */
+  border-radius: 2rem;
+  /* Shadow from .card.is-big */
+  box-shadow: 0 32px 0 0 var(--colors--page-bg-color-light), 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  margin-left: 5rem;
+  margin-right: 5rem;
+  padding: 3rem 4rem 2.25rem;
+  position: relative;
+  transition: box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+  overflow: hidden;
+  min-height: 20rem;
+}
+
+.hiddenCard {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none;
+  min-height: 0;
+}
+
+/* Side Shadows / Glow Effect removed as per user request */
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing--gap);
+  width: 100%;
+  align-items: start;
+}
+
+
+
+
+
+.emptyState {
+  text-align: center;
+  padding: 4rem;
+  font-family: var(--fonts--headings);
+  color: var(--colors--text-caption);
+  font-size: 1.5rem;
+}
+
+.errorBox {
+  color: var(--tomato);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+
+
+@media screen and (max-width: 991px) {
+  .pageTitle {
+    width: 100%;
+    /* font-size handled by globals variable */
+    letter-spacing: 0.15em;
+  }
+
+  .card {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 2rem;
+    border-radius: 1.5rem;
+  }
+
+  .atf {
+    padding-top: 15vh;
+    padding-bottom: 3rem;
+  }
+
+  .ctaActionsWrapper {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .resultsGrid {
+    grid-template-columns: 1fr;
+    /* Force single column on tablet/mobile */
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .atf {
+    padding-top: 6rem;
+    min-height: auto;
+  }
+
+  .card {
+    padding: 1.5rem 1rem;
+    border-radius: 1.25rem;
+  }
+
+  .searchContainer {
+    max-width: none;
+    width: 100%;
+    padding: 0 var(--spacing--gap);
+  }
+
+  .dividerLine {
+    width: 80%;
+  }
+
+  .emptyState {
+    padding: 2rem;
+  }
+}

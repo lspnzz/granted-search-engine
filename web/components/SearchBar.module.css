@@ -1,0 +1,131 @@
+/* .container stays centered */
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.inputWrapper {
+  /* Layout: Flexbox */
+  position: relative;
+  width: 40rem;
+  max-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--colors--page-bg-color-light);
+
+  /* Shadow logic */
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+
+  border: 1px solid var(--colors--text-accent-tomato);
+
+  /* "Match roundness": Button (2rem, r=1rem) + padding ~0.75rem. 
+     The user explicitly asked to "match the button". 
+     The button has radius 50% (circle).
+     A pill shape for the parent is the natural match. 
+     If we want 'match', we likely just want a pill shape, so 1.75rem or 2rem is safe. */
+  border-radius: 1.75rem;
+
+  transition: box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.inputWrapper.hasResults {
+  border-color: var(--colors--divider-light);
+}
+
+/* Textarea input becomes a flexible, transparent child */
+.input {
+  flex: 1;
+  /* Takes up remaining space */
+  width: 100%;
+  min-height: 3.5rem;
+  /* Maintains initial pill visual */
+
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+
+  padding: 1rem 0 1rem 1.75rem;
+  /* Left padding for pill shape, Right padding handled by button margin */
+
+  font-family: var(--fonts--body-family);
+  font-size: 1.125rem;
+  letter-spacing: 0.05em;
+  color: var(--colors--text-dark);
+
+  resize: none;
+  overflow: hidden;
+}
+
+/* Hover/Focus states now apply to the wrapper */
+.inputWrapper:hover,
+.inputWrapper:has(.input:focus) {
+  border-color: var(--colors--text-accent-tomato);
+  box-shadow: -2px -2px 4px 0 var(--colors--shadow-light), 2px 2px 4px 0 var(--colors--shadow-dark);
+}
+
+.inputWrapper:has(.input:focus) {
+  background-color: var(--white);
+}
+
+/* Hover over the button makes the wrapper's border transparent */
+.inputWrapper:has(.searchButton:hover) {
+  border-color: var(--colors--divider-light);
+  box-shadow: none;
+}
+
+.input::placeholder {
+  color: var(--colors--text-dark);
+  opacity: 0.7;
+}
+
+.searchButton {
+  /* Flex positioning instead of absolute */
+  position: static;
+  flex-shrink: 0;
+
+  margin-top: 0.43rem;
+  /* Align with top line of text */
+  margin-right: 0.5rem;
+  /* Gap to right edge */
+  margin-left: 1rem;
+  /* Gap from text */
+
+  background-color: var(--colors--page-bg-color-light);
+
+  /* Border transition logic */
+  border: 1px solid var(--colors--divider-light);
+  box-shadow: -4px -4px 4px 0 var(--colors--shadow-light), 4px 4px 4px 0 var(--colors--shadow-dark);
+
+  cursor: pointer;
+  color: var(--colors--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Sizing */
+  width: 2.5rem;
+  height: 2.5rem;
+
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+.searchButton:hover {
+  border-color: var(--colors--text-accent-tomato);
+  color: var(--colors--text-accent-tomato);
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+}
+
+/* Mobile Adjustments */
+@media screen and (max-width: 767px) {
+  .searchButton {
+    margin-left: 0.5rem;
+  }
+}
+
+.helpText {
+  display: none;
+}

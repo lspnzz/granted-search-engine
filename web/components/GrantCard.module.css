@@ -1,0 +1,369 @@
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* 
+ * The outer container now acts as a transparent wrapper 
+ * It handles the "expanded" state background and shadow
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 8px;
+  padding-bottom: 16px;
+  /* Space for bottom rounding */
+  border-radius: 20px;
+
+  /* Initial state: Transparent, no shadow */
+  background-color: transparent;
+  box-shadow: none;
+
+  /* Transition removed for GSAP control */
+
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  cursor: pointer;
+  /* height: 100%; Removed to allow align-items: start to work without stretching */
+  position: relative;
+  z-index: 1;
+  /* Z-index ensures it layers correctly when expanded, though usually handled by grid order. 
+     If we need it to pop *over* siblings visually while expanding without layout shift, 
+     we might need relative z-index on hover/active, but grid flow usually handles size. 
+  */
+}
+
+/* 
+ * EXPANDED STATE
+ * The wrapper turns white and gets the shadow
+ */
+.card.expanded {
+  background-color: var(--white);
+  box-shadow:
+    0px 8px 8px -4px rgba(9, 9, 11, 0.06),
+    0px 4px 4px -2px rgba(9, 9, 11, 0.03),
+    0px 2px 2px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -1px rgba(9, 9, 11, 0.03),
+    0px 1px 1px -0.5px rgba(9, 9, 11, 0.03),
+    0px 0px 0px 1px rgba(9, 9, 11, 0.03);
+
+  z-index: 10;
+  /* Ensure expanded card is above others if there's any overlap/shadow issue */
+}
+
+/* 
+ * HOVER STATE (Non-expanded)
+ * User request: "On hover we should see only the accent on the border of the header block and not touch anything else"
+ * So NO outer card styling on hover.
+ */
+.card:hover .mainContent {
+  border-color: var(--colors--text-accent-tomato);
+}
+
+/* 
+ * EXPANDED STATE - Inner Content
+ * "keeping the highlight on the header"
+ */
+.card.expanded .mainContent {
+  border-color: var(--colors--text-accent-tomato);
+  background-color: var(--white);
+  /* Optional: differentiate shadow or raise effect if desired, but user focused on "main card moving out" */
+}
+
+
+/* 
+ * MAIN CONTENT BOX 
+ * The visible "Card" header
+ */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  background-color: var(--colors--page-bg-color-light);
+
+  gap: 21px;
+  padding: 16px;
+
+  border: 1px solid var(--colors--divider-light);
+  border-radius: 16px;
+
+  box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
+
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.2s ease,
+    box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+
+
+  width: 100%;
+  min-height: 226px;
+
+  position: relative;
+  z-index: 2;
+  /* Sits on top of the sliding-out metadata */
+
+  /* Background must be solid opaque to hide metadata behind it */
+}
+
+
+.headerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-family: var(--fonts--headings);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0em;
+  line-height: 1.6;
+  color: var(--black);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--colors--text-caption);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.sourceLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--colors--text-caption);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+.matchScore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--colors--text-caption);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.icon {
+  color: var(--colors--text-accent-tomato);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 
+ * META DATA LIST 
+ * Sliding out from "behind" mainContent
+ */
+.metaList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+
+  /* Layout transition properties */
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-40px);
+  /* Tucked up behind the header */
+  margin-top: -20px;
+  /* Pull it up so it's physically behind/under */
+  pointer-events: none;
+  /* Not clickable when hidden */
+
+  z-index: 0;
+  /* Behind mainContent */
+  position: relative;
+
+  /* Transitions removed for GSAP control */
+
+  /* Ensure mask/overflow doesn't clip shadow of mainContent, but we need to hide this */
+  /* Actually since it's behind mainContent (with solid bg), we don't strictly need overflow hidden 
+     on the container IF mainContent covers it. But mainContent min-height might leave gaps?
+     Let's rely on z-index and translateY. */
+}
+
+/* Because we are using flex/gap on .card, the collapse might be tricky with gap.
+   .card has gap: 4px. When collapsed, we want metaList to effectively disappear.
+   Dimensions: grid 0fr handles internal height. 
+   We also need to handle the margin/gap.
+*/
+
+.card.expanded .metaList {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 8px;
+  /* Standard spacing */
+  pointer-events: auto;
+}
+
+/* Inner wrapper for grid transition trick */
+.metaList>div {
+  overflow: hidden;
+  /* This targets the direct children? No, metaList is flex in my old CSS but I changed it to grid above.
+     But wait, the children are .metaRow. 
+     The grid-template-rows trick works on the container if it has ONE child usually.
+     If it has multiple children, we need a wrapper OR we just animate standard height/max-height.
+     
+     Let's use a wrapper approach if strictly needed, OR use max-height.
+     grid-template-rows with multiple children works if we put them all in ONE wrapper.
+     Currently structure is: .metaList > .metaRow, .metaRow, ...
+     
+     If I change .metaList to grid, I can't easily animate "all children".
+     
+     Let's use the standard "max-height" or just rely on the user's suggestion of "sliding out".
+     User said: "lower part of the card sliding out from below the header... probably think about using a translate modification rather then height"
+     
+     So we don't need to animate height from 0 to auto per se, we need to animate position.
+     BUT the card *container* needs to grow to fit it.
+     
+     If we animate height:
+     .metaList { height: 0; overflow: hidden; }
+     .expanded .metaList { height: auto; } -> doesn't animate.
+     
+     Let's use grid-template-rows on the *wrapper* of these items?
+     Wait, I can just wrap the meta rows in a single <div> inside .metaList in the JSX?
+     I didn't do that in the JSX step.
+     
+     Alternative: `max-height`.
+  */
+}
+
+/* Refined Meta List approach without JSX change */
+.metaList {
+  display: flex;
+  /* Restore flex for layout */
+  flex-direction: column;
+  gap: 8px;
+
+  /* Hidden State */
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  margin-top: 0;
+  padding-bottom: 0;
+  /* Remove padding when hidden */
+  overflow: hidden;
+  /* Essential for height animation to hide content */
+
+  z-index: 0;
+
+  /* Transitions removed for GSAP control */
+}
+
+.card.expanded .metaList {
+  max-height: 500px;
+  /* Arbitrary large number, sufficiently large for content */
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 8px;
+  /* padding is defined in base but we might want to animate it */
+  padding-bottom: 0;
+  /* We handle padding on the card container padding-bottom: 16px */
+}
+
+/* Meta Rows Stagger handled via inline styles in JSX, but we add base transition here */
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 1.5;
+
+  /* Base transition for opacity/transform if we want them to slide in individually too */
+  opacity: 0;
+  transform: translateY(-10px);
+  /* Transition removed for GSAP control */
+}
+
+.card.expanded .metaRow {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.metaLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--colors--text-caption);
+  font-weight: 500;
+}
+
+.metaValue {
+  font-family: var(--fonts--headings);
+  font-weight: 500;
+  font-weight: 500;
+  color: var(--colors--text-caption);
+  text-align: right;
+}
+
+@media screen and (max-width: 767px) {
+  .mainContent {
+    min-height: auto;
+    padding: 1.25rem;
+  }
+
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .sourceLink,
+  .matchScore {
+    font-size: 0.75rem;
+    max-width: 100%;
+  }
+
+  .metaRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .metaValue {
+    width: 100%;
+    text-align: left;
+    padding-left: 24px;
+    /* Align with label text (icon width + gap) */
+  }
+}
