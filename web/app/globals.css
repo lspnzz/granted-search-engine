@@ -1,0 +1,173 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;700&display=swap');
+
+:root {
+  /* Studio Quinto Variables */
+  --travertine: #fbfaf8;
+  --purplish-black: #2e272e;
+  --tomato: #ff594a;
+  --almost-black: #1e1e1e;
+  --almost-white: #f3f3f3;
+  --purple: #7a32ed;
+  --off-white: #dedccf;
+  --grey: #d9d9d9;
+  --lighter-grey: #eee;
+  --white: #ffffff;
+  --black: #000000;
+
+  --colors--page-bg-color-light: var(--travertine);
+  --colors--text-dark: var(--purplish-black);
+  --colors--text-light: var(--travertine);
+  --colors--text-accent-tomato: var(--tomato);
+  --colors--text-accent-purple: var(--purple);
+  --colors--menu-and-footer-bg: var(--almost-black);
+  --colors--button-bg: var(--travertine);
+  --colors--shadow-light: white;
+  --colors--shadow-dark: var(--lighter-grey);
+  --colors--focus-highlight: var(--tomato);
+  --colors--text-caption: #6e6e73;
+  --colors--divider-light: #ddd;
+  --colors--interactive-section-bg: var(--almost-black);
+
+  /* Mapped Fonts */
+  --fonts--body-family: 'Cabin', sans-serif;
+  --fonts--headings-display: 'Cabin', sans-serif;
+  /* Fallback for custom font */
+  --fonts--headings: 'Outfit', sans-serif;
+  /* Fallback for Rand */
+
+  /* Spacing */
+  --spacing--gap: 1.125rem;
+  --spacing--gap-halved: 0.5625rem;
+  --spacing--text-container-max-width: 40rem;
+  --spacing--less-than-ultra-wide-page-width: 1920px;
+
+  /* Mobile Adjustments */
+  --heading-1-size: 2rem;
+  --heading-3-size: 1.75rem;
+}
+
+@media screen and (max-width: 767px) {
+  :root {
+    --heading-1-size: 1.25rem;
+    --heading-3-size: 1.5rem;
+    --spacing--gap: 1rem;
+  }
+}
+
+/* Global Resets & Typography */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--fonts--body-family);
+  font-size: 14px;
+  /* Default from reference */
+  line-height: 20px;
+  height: 100%;
+}
+
+body {
+  background-color: var(--colors--menu-and-footer-bg);
+  color: var(--colors--text-dark);
+  font-family: var(--fonts--body-family);
+  font-size: 1.25rem;
+  line-height: 150%;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection Color */
+::selection {
+  background: var(--colors--text-accent-tomato);
+  color: #EBEAE3;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+h1 {
+  font-family: var(--fonts--headings-display);
+  text-align: center;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: var(--heading-1-size);
+  line-height: 180%;
+}
+
+h3 {
+  font-family: var(--fonts--headings);
+  letter-spacing: -.04em;
+  font-size: var(--heading-3-size);
+  line-height: 120%;
+}
+
+/* Links */
+a {
+  color: var(--colors--text-accent-tomato);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons (Generic) */
+button {
+  all: unset;
+  cursor: pointer;
+}
+
+/* Inputs */
+input,
+textarea {
+  caret-color: var(--colors--text-accent-tomato);
+}
+
+.main-wrapper {
+  position: relative;
+  z-index: 2;
+  background-color: var(--colors--page-bg-color-light);
+  min-height: 100vh;
+  border-bottom-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
