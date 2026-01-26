@@ -1,0 +1,109 @@
+.mainContainer {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section {
+  width: 100%;
+  max-width: var(--spacing--text-container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing--gap);
+  padding-right: var(--spacing--gap);
+  margin-bottom: 2rem;
+}
+
+.atfSection {
+  padding-top: 15vh;
+  padding-bottom: 4rem;
+}
+
+.pageTitle {
+  font-family: var(--fonts--headings-display);
+  text-align: left;
+  font-size: 2.5rem;
+  line-height: 120%;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.sectionTitle {
+  font-family: var(--fonts--headings-display);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 4rem;
+  letter-spacing: -0.02em;
+}
+
+.subsectionTitle {
+  font-family: var(--fonts--headings);
+  font-size: 1.5rem;
+  margin-top: 3.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-family: var(--fonts--headings);
+  font-size: 1.25rem;
+  color: var(--colors--text-caption);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--colors--divider-light);
+  margin-top: var(--spacing--gap);
+  margin-bottom: var(--spacing--gap);
+  box-shadow: 0 1px #fff;
+  position: relative;
+}
+
+@media screen and (max-width: 991px) {
+  .divider {
+    margin-top: var(--spacing--gap-halved);
+    margin-bottom: var(--spacing--gap-halved);
+  }
+}
+
+.content p {
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 150%;
+}
+
+.list {
+  list-style: disc;
+  padding-left: 1rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.listItem {
+  margin-bottom: var(--spacing--gap);
+  font-size: 1.25rem;
+  line-height: 150%;
+  /* Removed flex and pseudo-element for standard list behavior */
+}
+
+.crossedOut {
+  text-decoration: line-through;
+  opacity: 0.6;
+  margin-right: 0.3em;
+}
+
+@media screen and (max-width: 768px) {
+  .pageTitle {
+    font-size: 2rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+}
