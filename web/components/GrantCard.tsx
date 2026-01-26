@@ -1,20 +1,109 @@
 import { Grant } from '../lib/api';
 import styles from './GrantCard.module.css';
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 
 
 interface GrantCardProps {
   grant: Grant;
   style?: CSSProperties;
   isExpanded?: boolean;
+  isDimmed?: boolean;
   onClick?: (event: React.MouseEvent) => void;
 }
 
-export default function GrantCard({ grant, style, isExpanded, onClick }: GrantCardProps) {
+export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick }: GrantCardProps) {
   const matchPercentage = grant.match_score ? Math.round(grant.match_score * 100) : 0;
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const metaListRef = useRef<HTMLDivElement>(null);
+  const metaRowsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Create a ref to store the GSAP context for cleanup
+  const ctx = useRef<gsap.Context | null>(null);
+
+  // Cleanup on unmount only
+  useEffect(() => {
+    ctx.current = gsap.context(() => { });
+    return () => ctx.current?.revert();
+  }, []);
+
+  // Handle animation on state change
+  useEffect(() => {
+    ctx.current?.add(() => {
+      // Animation Configuration
+      const duration = 1;
+      const openEase = "expo.inOut";
+      const closeEase = "expo.out";
+
+      if (isExpanded) {
+        // Expand Animation
+        gsap.to(cardRef.current, {
+          backgroundColor: '#ffffff',
+          boxShadow: '0px 8px 8px -4px rgba(9, 9, 11, 0.06), 0px 4px 4px -2px rgba(9, 9, 11, 0.03), 0px 2px 2px -1px rgba(9, 9, 11, 0.03), 0px 1px 1px -1px rgba(9, 9, 11, 0.03), 0px 1px 1px -0.5px rgba(9, 9, 11, 0.03), 0px 0px 0px 1px rgba(9, 9, 11, 0.03)',
+          duration: duration,
+          ease: openEase,
+          overwrite: 'auto' // Ensure we kill conflicting tweens
+        });
+
+        gsap.to(metaListRef.current, {
+          maxHeight: 500, // Sufficiently large value
+          opacity: 1,
+          y: 0,
+          marginTop: 8,
+          duration: duration,
+          ease: openEase,
+          overwrite: 'auto'
+        });
+
+        gsap.to(metaRowsRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: duration,
+          // stagger: 0.05,
+          ease: openEase,
+          overwrite: 'auto'
+        });
+      } else {
+        // Collapse Animation
+        gsap.to(cardRef.current, {
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+          duration: duration,
+          ease: closeEase,
+          overwrite: 'auto'
+        });
+
+        gsap.to(metaListRef.current, {
+          maxHeight: 0,
+          opacity: 0,
+          marginTop: 0,
+          duration: duration,
+          ease: closeEase,
+          overwrite: 'auto'
+        });
+
+        gsap.to(metaRowsRef.current, {
+          opacity: 0,
+          duration: duration,
+          ease: closeEase,
+          overwrite: 'auto'
+        });
+      }
+    });
+    ctx.current?.add(() => {
+      gsap.to(cardRef.current, {
+        opacity: isDimmed ? 0.4 : 1,
+        duration: 1, // Match the main animation duration
+        ease: isDimmed ? "expo.out" : "expo.in",
+        overwrite: 'auto'
+      });
+    });
+  }, [isExpanded, isDimmed]);
 
   return (
     <div
+      ref={cardRef}
       className={`${styles.card} ${isExpanded ? styles.expanded : ''}`}
       style={style}
       onClick={onClick}
@@ -70,8 +159,9 @@ export default function GrantCard({ grant, style, isExpanded, onClick }: GrantCa
       </div>
 
       {/* META ROWS: Plain text below card */}
-      <div className={styles.metaList}>
+      <div className={styles.metaList} ref={metaListRef}>
         <div
+          ref={(el) => { metaRowsRef.current[0] = el; }}
           className={styles.metaRow}
         >
           <div className={styles.metaLabelGroup}>
@@ -95,6 +185,7 @@ export default function GrantCard({ grant, style, isExpanded, onClick }: GrantCa
         </div>
 
         <div
+          ref={(el) => { metaRowsRef.current[1] = el; }}
           className={styles.metaRow}
         >
           <div className={styles.metaLabelGroup}>
@@ -118,6 +209,7 @@ export default function GrantCard({ grant, style, isExpanded, onClick }: GrantCa
         </div>
 
         <div
+          ref={(el) => { metaRowsRef.current[2] = el; }}
           className={styles.metaRow}
         >
           <div className={styles.metaLabelGroup}>
@@ -143,6 +235,7 @@ export default function GrantCard({ grant, style, isExpanded, onClick }: GrantCa
         </div>
 
         <div
+          ref={(el) => { metaRowsRef.current[3] = el; }}
           className={styles.metaRow}
         >
           <div className={styles.metaLabelGroup}>
