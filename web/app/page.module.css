@@ -147,12 +147,8 @@
   align-items: start;
 }
 
-/* Dim other cards when one is expanded */
-/* Optimized for performance: replaced :has() with direct class toggle */
-.hasExpanded>*:not([data-expanded="true"]) {
-  opacity: 0.1;
-  pointer-events: none;
-}
+
+
 
 
 .emptyState {
