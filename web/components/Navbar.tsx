@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import Link from 'next/link';
 import styles from './Navbar.module.css';
 
 import { useMenu } from '../context/MenuContext';
@@ -81,7 +82,7 @@ export default function Navbar() {
         <div className={styles.navbarContent}>
           {/* Logo */}
           {/* Logo */}
-          <div className={styles.navbarTitle}>GRANTED</div>
+          <Link href="/" className={styles.navbarTitle}>GRANTED</Link>
 
           <div className={styles.navbarRightSide}>
             <div className={styles.navbarDividerWrapper}>

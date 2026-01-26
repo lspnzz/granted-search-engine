@@ -36,6 +36,16 @@
   /* Using normal to ensure vertical centering is handled by flex container */
   color: var(--colors--text-accent-tomato);
   grid-column: 2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbarTitle:hover,
+.navbarTitle:visited,
+.navbarTitle:active,
+.navbarTitle:focus {
+  text-decoration: none;
+  color: var(--colors--text-accent-tomato);
 }
 
 .navbarDividerWrapper {
