@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense, useEffect, useRef } from 'react';
+import { useState, Suspense, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SearchBar from '../components/SearchBar';
 import GrantCard from '../components/GrantCard';
@@ -17,6 +17,7 @@ function SearchResults() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+  const [showDividerAnimation, setShowDividerAnimation] = useState(false);
 
   // Animation Refs
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -106,7 +107,9 @@ function SearchResults() {
       router.push(`/?q=${encodeURIComponent(pitch)}`, { scroll: false });
     }
 
+
     setLoading(true);
+    setShowDividerAnimation(false); // Reset divider animation
     setError('');
     setSearched(true);
     setGrants([]);
@@ -126,6 +129,12 @@ function SearchResults() {
     }
   }
 
+  const handleLoadingComplete = useCallback(() => {
+    // Search loading finished and loop animation finished.
+    // Now show the divider animation.
+    setShowDividerAnimation(true);
+  }, []);
+
   return (
     <>
       <section className={`${styles.section} ${styles.atf}`} ref={containerRef}>
@@ -137,7 +146,7 @@ function SearchResults() {
 
         <div className={styles.ctaActionsWrapper}>
           <div className={styles.atfMainButtonWrapper}>
-            <div className={`${styles.dividerLine} ${loading ? styles.loadingDivider : ''}`} ref={dividerRef}>
+            <div className={`${styles.dividerLine} ${showDividerAnimation ? styles.loadingDivider : ''}`} ref={dividerRef}>
               <div className={styles.dividerProgress}></div>
             </div>
             <div className={styles.searchContainer} ref={searchContainerRef}>
@@ -146,6 +155,7 @@ function SearchResults() {
                 onSearch={handleSearch}
                 isLoading={loading}
                 hasResults={grants.length > 0}
+                onLoadingComplete={handleLoadingComplete}
               />
             </div>
           </div>
