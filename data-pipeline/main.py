@@ -18,10 +18,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 @functions_framework.http
 def run_pipeline(request):
-    # TODO(LS): Expect parameters to chose embedding models, chuniking strategy, etc.
-
     request_json = request.get_json(silent=True)
     if not request_json:
         return (
@@ -31,25 +35,49 @@ def run_pipeline(request):
 
     try:
         pipeline_req = PipelineRequest(**request_json)  # (LS): Validate with Pydantic
+
+        # Config extraction (Request > Env > Default)
+        INDEX_NAME = pipeline_req.pinecone_index_name or os.getenv(
+            "PINECONE_INDEX_NAME"
+        )
+
+        NAMESPACE = pipeline_req.pinecone_namespace or os.getenv("PINECONE_NAMESPACE")
+
+        _chunk_size = pipeline_req.chunk_size or os.getenv("CHUNK_SIZE")
+        CHUNK_SIZE = int(_chunk_size) if _chunk_size else None
+
+        _chunk_overlap = pipeline_req.chunk_overlap or os.getenv("CHUNK_OVERLAP")
+        CHUNK_OVERLAP = int(_chunk_overlap) if _chunk_overlap else None
+
+        MODEL_NAME = pipeline_req.model_name or os.getenv("MODEL_NAME")
+
+        _dimensions = pipeline_req.dimensions or os.getenv("DIMENSIONS")
+        DIMENSIONS = int(_dimensions) if _dimensions else None
+
         if (
-            not pipeline_req.pinecone_index_name
-            and not pipeline_req.pinecone_index_host
+            not INDEX_NAME
+            or not NAMESPACE
+            or not CHUNK_SIZE
+            or not CHUNK_OVERLAP
+            or not MODEL_NAME
+            or not DIMENSIONS
         ):
-            return ({"error": "Missing pinecone index name (or host)"}, 400)
-
-        if not pipeline_req.pinecone_namespace:
-            return ({"error": "Missing pinecone namespace"}, 400)
-
-        # Config extraction
-        INDEX_NAME = pipeline_req.pinecone_index_name
-        # Fallback to host if name not provided (backward compatibility)
-        INDEX_HOST = pipeline_req.pinecone_index_host
-        NAMESPACE = pipeline_req.pinecone_namespace
-
-        CHUNK_SIZE = pipeline_req.chunk_size
-        CHUNK_OVERLAP = pipeline_req.chunk_overlap
-        MODEL_NAME = pipeline_req.model_name
-        DIMENSIONS = pipeline_req.dimensions
+            missing_params = [
+                k
+                for k, v in {
+                    "INDEX_NAME": INDEX_NAME,
+                    "NAMESPACE": NAMESPACE,
+                    "CHUNK_SIZE": CHUNK_SIZE,
+                    "CHUNK_OVERLAP": CHUNK_OVERLAP,
+                    "MODEL_NAME": MODEL_NAME,
+                    "DIMENSIONS": DIMENSIONS,
+                }.items()
+                if not v
+            ]
+            return (
+                {"error": f"Missing required parameters: {', '.join(missing_params)}"},
+                400,
+            )
 
         grants_filename = pipeline_req.load_grants_from_file
 
@@ -80,7 +108,6 @@ def run_pipeline(request):
             index_name=INDEX_NAME,
             namespace=NAMESPACE,
             dimensions=DIMENSIONS,
-            host=INDEX_HOST,  # Pass host for backward compatibility if name is missing
         )
         logger.info(f"Chunks upserted to Pinecone")
         # TODO(LS): Move embedded chunks to processed bucket.
