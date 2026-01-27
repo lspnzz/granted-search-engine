@@ -16,32 +16,21 @@ export interface SearchResponse {
   grants: Grant[];
 }
 
+
 export async function searchGrants(pitch: string): Promise<SearchResponse> {
-  // const apiUrl = process.env.NEXT_PUBLIC_SEARCH_API_URL;
-  // if (!apiUrl) {
-  //   throw new Error("NEXT_PUBLIC_SEARCH_API_URL is not defined");
-  // }
+  const response = await fetch("/api/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ pitch }),
+  });
 
-  // // TODO(LS): Remove extra params after updating the backend.
-  // const response = await fetch(apiUrl, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     pitch,
-  //     top_k: Number(process.env.NEXT_PUBLIC_SEARCH_TOP_K),
-  //     model_name: process.env.NEXT_PUBLIC_SEARCH_MODEL_NAME,
-  //     dimensions: Number(process.env.NEXT_PUBLIC_SEARCH_DIMENSIONS),
-  //     pinecone_index_name: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
-  //     pinecone_namespace: process.env.NEXT_PUBLIC_PINECONE_NAMESPACE,
-  //   }),
-  // });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Error searching grants: ${response.statusText}`);
+  }
 
-  // if (!response.ok) {
-  //   throw new Error(`Error searching grants: ${response.statusText}`);
-  // }
-
-  // return response.json();
-  return Promise.resolve({ pitch, grants: mockGrants });
+  return response.json();
 }
+
