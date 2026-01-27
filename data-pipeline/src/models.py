@@ -37,14 +37,11 @@ class GrantChunk(BaseModel):
 
 class PipelineRequest(BaseModel):
     load_grants_from_file: str | None = None
-    pinecone_index_host: str | None = (
-        None  # Deprecated in favor of pinecone_index_name lookup
-    )
     pinecone_index_name: str | None = None
     pinecone_namespace: str | None = None
 
     # Configuration Parameters
-    model_name: str = "text-embedding-3-small"
-    dimensions: int = 1536
-    chunk_size: int = 2000
-    chunk_overlap: int = 200
+    model_name: str | None = None
+    dimensions: int | None = None
+    chunk_size: int | None = None
+    chunk_overlap: int | None = None
