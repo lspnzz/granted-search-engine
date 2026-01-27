@@ -17,7 +17,7 @@
   /* Shadow logic */
   box-shadow: -8px -8px 8px 0 var(--colors--shadow-light), 8px 8px 8px 0 var(--colors--shadow-dark);
 
-  border: 1px solid var(--colors--text-accent-tomato);
+  border: 1px solid var(--colors--divider-light);
 
   /* "Match roundness": Button (2rem, r=1rem) + padding ~0.75rem. 
      The user explicitly asked to "match the button". 
@@ -27,6 +27,10 @@
   border-radius: 1.75rem;
 
   transition: box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.inputWrapper.loading {
+  border-color: transparent;
 }
 
 .inputWrapper.hasResults {
@@ -128,4 +132,32 @@
 
 .helpText {
   display: none;
+}
+
+.borderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 1.75rem;
+  overflow: visible;
+  z-index: 5;
+}
+
+.borderSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.borderRect {
+  fill: none;
+  stroke: var(--colors--text-accent-tomato);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  rx: 1.75rem;
+  ry: 1.75rem;
+  opacity: 0;
 }

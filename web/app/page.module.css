@@ -93,10 +93,14 @@
     opacity: 1;
   }
 
+  80% {
+    width: 100%;
+    opacity: 1;
+  }
+
   100% {
     width: 100%;
-    /* Fills the divider line to the left edge */
-    opacity: 1;
+    opacity: 0;
   }
 }
 
