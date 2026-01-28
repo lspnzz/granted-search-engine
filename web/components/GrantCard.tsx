@@ -3,6 +3,39 @@ import styles from './GrantCard.module.css';
 import { CSSProperties, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
+const FORTHCOMING = "31094501";
+const OPEN_FOR_SUBMISSION = "31094502";
+
+function formatDate(dateString: string | undefined): string {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if parsing fails
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(date);
+  } catch (e) {
+    return dateString;
+  }
+}
+
+function formatCurrency(amount: string | number | undefined): string {
+  if (!amount) return 'N/A';
+  // If it's already a formatted string with currency, just return it (or strip and reformat if needed)
+  // Assuming input might be a raw number string or proper number.
+  // We'll try to parse it.
+  const num = typeof amount === 'string' ? parseFloat(amount.replace(/[^0-9.-]+/g, "")) : amount;
+
+  if (isNaN(num)) return amount.toString();
+
+  return new Intl.NumberFormat('de-DE', { // de-DE uses dots for thousands
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(num);
+}
 
 interface GrantCardProps {
   grant: Grant;
@@ -179,7 +212,7 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
             </span>
             Total available funding
           </div>
-          <span className={styles.metaValue}>{grant.amount || 'N/A'}</span>
+          <span className={styles.metaValue}>{formatCurrency(grant.amount)}</span>
         </div>
 
         <div
@@ -203,7 +236,7 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
             </span>
             Opening date
           </div>
-          <span className={styles.metaValue}>{grant.opening_date || 'N/A'}</span>
+          <span className={styles.metaValue}>{formatDate(grant.opening_date)}</span>
         </div>
 
         <div
@@ -229,7 +262,7 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
             </span>
             Deadline date
           </div>
-          <span className={styles.metaValue}>{grant.deadline || 'Ongoing'}</span>
+          <span className={styles.metaValue}>{formatDate(grant.deadline)}</span>
         </div>
 
         <div
@@ -251,7 +284,11 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
             </span>
             Status
           </div>
-          <span className={styles.metaValue}>{grant.status || 'Open for submissions'}</span>
+          <span className={styles.metaValue}>
+            {grant.status === FORTHCOMING ? 'Forthcoming' :
+              grant.status === OPEN_FOR_SUBMISSION ? 'Open for submission' :
+                grant.status || 'Open for submissions'}
+          </span>
         </div>
       </div>
     </div>

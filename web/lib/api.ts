@@ -1,6 +1,7 @@
 import { mockGrants } from "./mock-grants";
 
 export interface Grant {
+  id?: string;
   title?: string;
   description?: string;
   amount?: string;
