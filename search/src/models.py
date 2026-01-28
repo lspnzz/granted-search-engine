@@ -6,6 +6,12 @@ class Grant(BaseModel):
     id: str
     title: str
     match_score: float
+    description: str | None = None
+    amount: str | None = None
+    deadline: str | None = None
+    status: str | None = None
+    url: str | None = None
+    opening_date: str | None = None
 
 
 class SearchRequest(BaseModel):

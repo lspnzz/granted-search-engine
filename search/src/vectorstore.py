@@ -21,13 +21,23 @@ def query_grants(
         include_metadata=True,
     )
     raw_grants = response["matches"]
-    parsed_grants = [
-        Grant(
-            id=grant["id"],
-            title=grant["metadata"]["title"],
-            match_score=grant["score"],
+    parsed_grants = []
+    for grant in raw_grants:
+        metadata = grant["metadata"]
+        amount_val = metadata.get("total_funding_opportunity")
+
+        parsed_grants.append(
+            Grant(
+                id=grant["id"],
+                title=metadata.get("title"),
+                match_score=grant["score"],
+                description=metadata.get("description"),
+                amount=str(amount_val) if amount_val is not None else None,
+                deadline=metadata.get("deadline_date"),
+                status=metadata.get("status"),
+                url=metadata.get("url"),
+                opening_date=metadata.get("start_date"),
+            )
         )
-        for grant in raw_grants
-    ]
 
     return parsed_grants
