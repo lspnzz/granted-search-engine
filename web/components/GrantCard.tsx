@@ -114,7 +114,7 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
         <div className={styles.headerGroup}>
           <h3 className={styles.title}>{grant.title}</h3>
           <p className={styles.description}>
-            {grant.description}
+            {grant.summary}
           </p>
         </div>
 
