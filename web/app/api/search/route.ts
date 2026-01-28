@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { pitch } = body;
 
-    const targetUrl = process.env.NEXT_PUBLIC_SEARCH_API_URL;
+    const targetUrl = process.env.SEARCH_API_URL;
     if (!targetUrl) {
-      console.error("NEXT_PUBLIC_SEARCH_API_URL is not defined");
+      console.error("SEARCH_API_URL is not defined");
       return NextResponse.json({ error: "Configuration Error" }, { status: 500 });
     }
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Backend error: ${response.status} ${errorText}`);
+      console.error(`Backend error: ${response.status} ${errorText} at ${targetUrl}`);
       return NextResponse.json({ error: `Backend Error: ${response.statusText}` }, { status: response.status });
     }
 
