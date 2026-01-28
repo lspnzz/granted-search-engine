@@ -2,7 +2,7 @@ import { mockGrants } from "./mock-grants";
 
 export interface Grant {
   title?: string;
-  summary?: string;
+  description?: string;
   amount?: string;
   deadline?: string;
   match_score?: number;

@@ -30,7 +30,6 @@ def _chunk_grant(
             metadata={
                 "title": grant.title,
                 "url": grant.url,
-                "summary": grant.summary,
                 "start_date": grant.start_date,
                 "deadline_date": grant.deadline_date,
                 "status": grant.status,
