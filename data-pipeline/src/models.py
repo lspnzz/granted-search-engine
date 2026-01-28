@@ -19,7 +19,6 @@ class Grant(BaseModel):
 class GrantMetadata(BaseModel):
     title: str
     url: str
-    summary: str
     start_date: str
     deadline_date: str
     status: str

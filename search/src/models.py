@@ -6,7 +6,6 @@ class Grant(BaseModel):
     id: str
     title: str
     match_score: float
-    summary: str | None = None
     amount: str | None = None
     deadline: str | None = None
     status: str | None = None
