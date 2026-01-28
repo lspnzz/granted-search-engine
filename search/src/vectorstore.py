@@ -31,7 +31,7 @@ def query_grants(
                 id=grant["id"],
                 title=metadata.get("title"),
                 match_score=grant["score"],
-                description=metadata.get("description"),
+                summary=metadata.get("summary"),
                 amount=str(amount_val) if amount_val is not None else None,
                 deadline=metadata.get("deadline_date"),
                 status=metadata.get("status"),
