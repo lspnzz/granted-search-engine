@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import styles from './Navbar.module.css';
 
 import { useMenu } from '../context/MenuContext';
@@ -73,7 +74,13 @@ export default function Navbar() {
   }, [menuOpen]);
 
   const handleClick = () => {
+    const newState = !menuOpen;
     toggleMenu();
+
+    // Track menu toggle
+    posthog.capture('menu_toggled', {
+      menu_state: newState ? 'opened' : 'closed',
+    });
   };
 
   return (

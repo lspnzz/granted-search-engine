@@ -1,7 +1,10 @@
+'use client';
+
 import { Grant } from '../lib/api';
 import styles from './GrantCard.module.css';
 import { CSSProperties, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import posthog from 'posthog-js';
 
 const FORTHCOMING = "31094501";
 const OPEN_FOR_SUBMISSION = "31094502";
@@ -150,7 +153,21 @@ export default function GrantCard({ grant, style, isExpanded, isDimmed, onClick 
         </div>
 
         <div className={styles.footer}>
-          <a href={grant.url || '#'} className={styles.sourceLink} target="_blank" rel="noopener noreferrer">
+          <a
+            href={grant.url || '#'}
+            className={styles.sourceLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent card expansion when clicking link
+              posthog.capture('grant_source_clicked', {
+                grant_title: grant.title,
+                grant_id: grant.id,
+                grant_url: grant.url,
+                match_score: grant.match_score,
+              });
+            }}
+          >
             <span className={styles.icon}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clipPath="url(#clip0_162_7)">
