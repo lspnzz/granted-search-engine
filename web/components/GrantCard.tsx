@@ -30,7 +30,7 @@ function formatCurrency(amount: string | number | undefined): string {
 
   if (isNaN(num)) return amount.toString();
 
-  return new Intl.NumberFormat('de-DE', { // de-DE uses dots for thousands
+  return new Intl.NumberFormat('nl-NL', { // nl-NL uses dots for thousands and puts symbol first
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 0,
