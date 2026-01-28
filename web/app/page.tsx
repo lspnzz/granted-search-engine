@@ -2,6 +2,7 @@
 
 import { useState, Suspense, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import posthog from 'posthog-js';
 import SearchBar from '../components/SearchBar';
 import GrantCard from '../components/GrantCard';
 import { Grant, searchGrants } from '../lib/api';
@@ -121,9 +122,22 @@ function SearchResults() {
         new Promise((resolve) => setTimeout(resolve, 500)) // Min 0.5s animation duration
       ]);
       setGrants(data.grants);
+
+      // Track successful grant search
+      posthog.capture('grant_searched', {
+        query: pitch,
+        results_count: data.grants.length,
+      });
     } catch (err) {
       console.error(err);
       setError('Failed to fetch grants. Please try again.');
+
+      // Track search error
+      posthog.capture('search_error', {
+        query: pitch,
+        error_message: err instanceof Error ? err.message : 'Unknown error',
+      });
+      posthog.captureException(err);
     } finally {
       setLoading(false);
     }
@@ -176,12 +190,23 @@ function SearchResults() {
                     isDimmed={expandedCardId !== null && expandedCardId !== i}
                     onClick={(e) => {
                       // Stop propagation so the document listener doesn't immediately close it
-                      // if we are clicking TO open. 
+                      // if we are clicking TO open.
                       // Actually, React events propagate to document listeners.
                       // We can use e.stopPropagation() here to prevent the document listener from firing
                       // for THIS click.
                       e.stopPropagation();
-                      setExpandedCardId(expandedCardId === i ? null : i);
+                      const isExpanding = expandedCardId !== i;
+                      setExpandedCardId(isExpanding ? i : null);
+
+                      // Track grant card expansion
+                      if (isExpanding) {
+                        posthog.capture('grant_card_expanded', {
+                          grant_title: grant.title,
+                          grant_id: grant.id,
+                          match_score: grant.match_score,
+                          position_in_results: i,
+                        });
+                      }
                     }}
                   />
                 ))}
