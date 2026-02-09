@@ -43,12 +43,12 @@ export default function Menu() {
             <div className={styles.menuContentWrapper}>
               <h3>Did you really think this was a menu? 😏</h3>
               <p>
-                <b style={{ color: 'tomato' }}>While we have your attention:</b> Granted is currently an engineering excercise.
-                If you care about what it does and would like to pay for a proper product, please reach out to{' '}
+                <b style={{ color: 'tomato' }}>While we have your attention:</b> Granted is currently in open beta.
+                If you care about what it does and would like to support it's development, please reach out to{' '}
                 <a href="mailto:takemymoney@grantedsearch.eu?subject=I'd like to pay for a proper product">
                   takemymoney@grantedsearch.eu
                 </a>
-                . We have big plans for this, but we may or may not decide to work on it. No pressure, but it all depends on <s>your wallet</s> you.
+                . We have big plans for this and we'll need your support. No pressure, but it all depends on <s>your wallet</s> you.
               </p>
             </div>
           </div>
