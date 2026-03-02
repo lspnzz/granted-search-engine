@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 import logging
 import functions_framework
 from pydantic import ValidationError
@@ -18,9 +20,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-import os
-from dotenv import load_dotenv
-
 load_dotenv()
 
 
@@ -34,19 +33,22 @@ def run_pipeline(request):
         )  # (LS): Bad Request
 
     try:
-        pipeline_req = PipelineRequest(**request_json)  # (LS): Validate with Pydantic
+        # (LS): Validate with Pydantic
+        pipeline_req = PipelineRequest(**request_json)
 
         # Config extraction (Request > Env > Default)
         INDEX_NAME = pipeline_req.pinecone_index_name or os.getenv(
             "PINECONE_INDEX_NAME"
         )
 
-        NAMESPACE = pipeline_req.pinecone_namespace or os.getenv("PINECONE_NAMESPACE")
+        NAMESPACE = pipeline_req.pinecone_namespace or os.getenv(
+            "PINECONE_NAMESPACE")
 
         _chunk_size = pipeline_req.chunk_size or os.getenv("CHUNK_SIZE")
         CHUNK_SIZE = int(_chunk_size) if _chunk_size else None
 
-        _chunk_overlap = pipeline_req.chunk_overlap or os.getenv("CHUNK_OVERLAP")
+        _chunk_overlap = pipeline_req.chunk_overlap or os.getenv(
+            "CHUNK_OVERLAP")
         CHUNK_OVERLAP = int(_chunk_overlap) if _chunk_overlap else None
 
         MODEL_NAME = pipeline_req.model_name or os.getenv("MODEL_NAME")
@@ -83,7 +85,8 @@ def run_pipeline(request):
 
         if grants_filename:
             raw_grants = load_raw_grants(grants_filename)
-            logger.info(f"Loaded {len(raw_grants)} grants from file: {grants_filename}")
+            logger.info(
+                f"Loaded {len(raw_grants)} grants from file: {grants_filename}")
         else:
             raw_grants = fetch_grants()
             store_raw_grants(raw_grants)

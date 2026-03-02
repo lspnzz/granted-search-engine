@@ -1,13 +1,12 @@
 import os
-from dotenv import load_dotenv
-from openai import OpenAI
+import logging
+import requests
 from src.models import GrantChunk
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-BATCH_SIZE = 100
+logger = logging.getLogger(__name__)
 
-client = OpenAI(api_key=OPENAI_API_KEY)
+BATCH_SIZE = 100
+EMBEDDINGS_SERVICE_URL = os.getenv("EMBEDDINGS_SERVICE_URL")
 
 
 def embed_chunks(
@@ -22,16 +21,28 @@ def embed_chunks(
         batch = texts[batch_start:batch_end]
 
         try:
-            response = client.embeddings.create(
-                model=model_name, input=batch, dimensions=dimensions
+            # Call embeddings API
+            response = requests.post(
+                f"{EMBEDDINGS_SERVICE_URL}/embed",
+                # TODO(IZ): add thr auth token, folow the search Fe
+                json={"texts": batch, "model": model_name,},
+                timeout=30
             )
+            # we want to raise before we parse bad responses
+            response.raise_for_status()
+            
+            data = response.json()
+            embeddings = data.get("embeddings", [])
         except Exception as e:
+            logger.error(
+                f"Embedding batch {batch_start}:{batch_end} failed: {type(e).__name__}: {str(e)}"
+            )
             raise RuntimeError(
                 f"Embedding batch {batch_start}:{batch_end} failed"
             ) from e
 
         # Assign embeddings directly back to the matching chunks
-        for offset, item in enumerate(response.data):
-            chunks[batch_start + offset].embedding = item.embedding
+        for offset, embedding in enumerate(embeddings):
+            chunks[batch_start + offset].embedding = embedding
 
     return chunks
