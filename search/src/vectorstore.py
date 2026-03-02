@@ -1,10 +1,9 @@
 import os
 from typing import List
-from dotenv import load_dotenv
+
 from pinecone import Pinecone
 from src.models import Grant
 
-load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
