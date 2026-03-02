@@ -3,3 +3,4 @@ functions-framework==3.10.0
 openai==2.9.0
 pinecone==8.0.0
 pydantic==2.12.5
+requests==2.32.5
