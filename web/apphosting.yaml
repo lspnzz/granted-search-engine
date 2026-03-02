@@ -14,6 +14,6 @@ env:
 
   # Server-only vars (used by API routes to proxy to Cloud Run backends)
   - variable: SEARCH_API_URL
-    value: "https://search-v1-497910573020.europe-west4.run.app"
+    value: "https://europe-west4-granted-480910.cloudfunctions.net/search_grants"
   - variable: AGENT_API_URL
     value: "https://pitch-agent-497910573020.europe-west1.run.app"
