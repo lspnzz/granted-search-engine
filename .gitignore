@@ -36,7 +36,15 @@ venv.bak/
 .vscode/
 .DS_Store
 
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
 # Other
 deploy.sh
 invoke.sh
 pyrefly.toml
+
+# Claude worktrees
+.claude/worktrees/
