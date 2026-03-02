@@ -1,7 +1,7 @@
 import logging
 import os
 
-from firebase_functions import https_fn
+from firebase_functions import https_fn, options
 from firebase_functions.params import SecretParam, StringParam, IntParam
 from pydantic import ValidationError
 from src.models import SearchRequest
@@ -22,11 +22,16 @@ MODEL_NAME_PARAM = StringParam("MODEL_NAME")
 DIMENSIONS_PARAM = IntParam("DIMENSIONS")
 TOP_K_PARAM = IntParam("TOP_K", default=10)
 
+cors_env = os.environ.get("CORS_ORIGINS")
+CORS_ORIGINS = cors_env.split(",") if cors_env else []
+
 
 @https_fn.on_request(
     region="europe-west4",
     secrets=[OPENAI_API_KEY, PINECONE_API_KEY],
-    cors=True,
+    cors=options.CorsOptions(
+        cors_origins=CORS_ORIGINS, cors_methods=["GET", "POST", "OPTIONS"]
+    ),
 )
 def search_grants(request: https_fn.Request) -> https_fn.Response:
     request_json = request.get_json(silent=True)
