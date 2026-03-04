@@ -18,8 +18,6 @@ PINECONE_API_KEY = SecretParam("PINECONE_API_KEY")
 # Environment params (set via firebase functions:config or .env)
 PINECONE_INDEX_NAME_PARAM = StringParam("PINECONE_INDEX_NAME")
 PINECONE_NAMESPACE_PARAM = StringParam("PINECONE_NAMESPACE")
-MODEL_NAME_PARAM = StringParam("MODEL_NAME")
-DIMENSIONS_PARAM = IntParam("DIMENSIONS")
 TOP_K_PARAM = IntParam("TOP_K", default=10)
 
 cors_env = os.environ.get("CORS_ORIGINS")
@@ -50,11 +48,6 @@ def search_grants(request: https_fn.Request) -> https_fn.Response:
         _top_k = search_req.top_k or os.getenv("TOP_K")
         TOP_K = int(_top_k) if _top_k else None
 
-        MODEL_NAME = search_req.model_name or os.getenv("MODEL_NAME")
-
-        _dimensions = search_req.dimensions or os.getenv("DIMENSIONS")
-        DIMENSIONS = int(_dimensions) if _dimensions else None
-
         PINECONE_INDEX_NAME = search_req.pinecone_index_name or os.getenv(
             "PINECONE_INDEX_NAME"
         )
@@ -63,20 +56,12 @@ def search_grants(request: https_fn.Request) -> https_fn.Response:
             "PINECONE_NAMESPACE"
         )
 
-        if (
-            not PINECONE_INDEX_NAME
-            or not PINECONE_NAMESPACE
-            or not MODEL_NAME
-            or not DIMENSIONS
-            or not TOP_K
-        ):
+        if not PINECONE_INDEX_NAME or not PINECONE_NAMESPACE or not TOP_K:
             missing_params = [
                 k
                 for k, v in {
                     "INDEX_NAME": PINECONE_INDEX_NAME,
                     "NAMESPACE": PINECONE_NAMESPACE,
-                    "MODEL_NAME": MODEL_NAME,
-                    "DIMENSIONS": DIMENSIONS,
                     "TOP_K": TOP_K,
                 }.items()
                 if not v
@@ -86,9 +71,7 @@ def search_grants(request: https_fn.Request) -> https_fn.Response:
                 400,
             )
 
-        embedded_pitch = embed_pitch(
-            pitch, model=MODEL_NAME, dimensions=int(DIMENSIONS)
-        )
+        embedded_pitch = embed_pitch(pitch)
         grants = query_grants(
             embedded_pitch,
             top_k=TOP_K,

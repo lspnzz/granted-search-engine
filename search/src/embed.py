@@ -6,22 +6,16 @@ from typing import List
 logger = logging.getLogger(__name__)
 
 # URL of the embeddings service (set at runtime or default to local)
-EMBEDDINGS_SERVICE_URL = os.getenv(
-    "EMBEDDINGS_SERVICE_URL"
-)
+EMBEDDINGS_SERVICE_URL = os.getenv("EMBEDDINGS_SERVICE_URL")
 
 
 def embed_pitch(
     pitch: str,
-    model: str,
-    dimensions: int,
 ) -> List[float]:
     """Call the embeddings service to embed a single pitch."""
     try:
         response = requests.post(
-            f"{EMBEDDINGS_SERVICE_URL}/embed",
-            json={"texts": [pitch], "model": model},
-            timeout=30
+            f"{EMBEDDINGS_SERVICE_URL}/embed", json={"texts": [pitch]}, timeout=30
         )
         response.raise_for_status()
         data = response.json()

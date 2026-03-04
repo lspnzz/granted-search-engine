@@ -1,8 +1,9 @@
 import logging
+import os
 
+from openai import OpenAI
 from firebase_functions import https_fn
 from firebase_functions.params import SecretParam
-from src.openai_embeddings import OpenAIEmbeddings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,16 +23,23 @@ def embed(request: https_fn.Request) -> https_fn.Response:
         return {"error": "Missing 'texts' field in request"}, 400
 
     texts = request_json.get("texts")
-    model = request_json.get("model")
+    model = request_json.get("model") or os.environ.get("MODEL_NAME")
+    dimensions_str = request_json.get("dimensions") or os.environ.get("DIMENSIONS")
 
     if not texts or not isinstance(texts, list):
         return {"error": "'texts' field must be non-empty list"}, 400
 
+    if not model or not dimensions_str:
+        return {"error": "Missing 'model' or 'dimensions' configuration"}, 400
+
     try:
-        embeddings_client = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY.value)
+        dimensions = int(dimensions_str)
+        client = OpenAI(api_key=OPENAI_API_KEY.value)
 
         # Call OpenAI embeddings API
-        result = embeddings_client.client.embeddings.create(model=model, input=texts)
+        result = client.embeddings.create(
+            model=model, input=texts, dimensions=dimensions
+        )
 
         # Extract embeddings from response
         embeddings = [item.embedding for item in result.data]
