@@ -1,0 +1,19 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 4
+  memoryMiB: 512
+  cpu: 1
+  concurrency: 80
+
+env:
+  # Public vars (available at build time, inlined into client JS)
+  - variable: NEXT_PUBLIC_POSTHOG_KEY
+    value: "phc_XRxAmnD4BZcMAwTAl4H62LoPEiy3SE6xilMDSaC3ORw"
+  - variable: NEXT_PUBLIC_POSTHOG_HOST
+    value: "https://eu.i.posthog.com"
+
+  # Server-only vars (used by API routes to proxy to Cloud Run backends)
+  - variable: SEARCH_API_URL
+    value: "https://europe-west4-granted-480910.cloudfunctions.net/search_grants"
+  - variable: AGENT_API_URL
+    value: "https://pitch-agent-497910573020.europe-west1.run.app"

@@ -1,3 +1,5 @@
+# This Dockerfile is retained for local Docker builds and reference.
+# Production deployment uses Firebase App Hosting (see apphosting.yaml).
 FROM node:20-alpine AS base
 
 # Install dependencies only when needed

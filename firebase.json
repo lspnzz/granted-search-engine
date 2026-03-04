@@ -1,0 +1,12 @@
+{
+  "apphosting": {
+    "source": "web"
+  },
+  "functions": [
+    {
+      "source": "search",
+      "codebase": "search",
+      "runtime": "python312"
+    }
+  ]
+}
