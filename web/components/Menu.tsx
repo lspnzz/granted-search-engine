@@ -12,8 +12,8 @@ export default function Menu() {
 
   useEffect(() => {
     // Animation Config
-    const clickDuration = 1.5;
-    const clickEase = "expo.inOut";
+    const clickDuration = 0.8;
+    const clickEase = "power3.inOut";
 
     tlMenuReveal.current = gsap.timeline({ paused: true, defaults: { duration: clickDuration, ease: clickEase } })
       .fromTo(menuWrapperRef.current, { height: 0 }, { height: "auto" }); // "auto" isn't fully supported in all fromTo cases cleanly without some hacks, but GSAP handles it reasonably well usually. 

@@ -1,0 +1,193 @@
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--profile-panel-width);
+  height: 100vh;
+  background-color: var(--colors--menu-and-footer-bg);
+  color: var(--colors--text-light);
+  padding: 0 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 800;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--colors--text-light);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.closeButton:hover {
+  color: var(--colors--text-accent-tomato);
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  width: 100%;
+  height: 5rem;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--fonts--headings-display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--colors--text-light);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.titleDivider {
+  flex: 1;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin-left: var(--spacing--gap, 1.5rem);
+  margin-right: -2.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.input {
+  width: 100%;
+  height: 3rem;
+  box-sizing: border-box;
+  padding: 0 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.75rem;
+  background: none;
+  font-family: var(--fonts--body-family);
+  font-size: 0.875rem;
+  color: var(--colors--text-light);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--colors--text-accent-tomato);
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.submitButton {
+  width: 100%;
+  height: 3rem;
+  box-sizing: border-box;
+  padding: 0 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.75rem;
+  background: none;
+  font-family: var(--fonts--headings-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  outline: none;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: not-allowed;
+}
+
+.submitButton.active {
+  color: var(--colors--text-light);
+  border-color: var(--colors--text-accent-tomato);
+  background: none;
+  cursor: pointer;
+}
+
+.submitButton.active:hover {
+  background-color: var(--colors--text-accent-tomato);
+  color: var(--colors--text-light);
+}
+
+.successMessage {
+  color: var(--colors--text-light);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 0.75rem 0;
+}
+
+.error {
+  color: var(--colors--text-accent-tomato);
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5rem;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--colors--text-accent-tomato);
+  color: var(--colors--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonts--headings-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.userEmail {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.signOutButton {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.75rem;
+  background: none;
+  color: var(--colors--text-light);
+  font-family: var(--fonts--headings-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.signOutButton:hover {
+  border-color: var(--colors--text-accent-tomato);
+  color: var(--colors--text-accent-tomato);
+}
+
+@media screen and (max-width: 767px) {
+  .titleWrapper {
+    height: 4rem;
+  }
+}

@@ -7,6 +7,7 @@ import posthog from 'posthog-js';
 import styles from './Navbar.module.css';
 
 import { useMenu } from '../context/MenuContext';
+import AuthButton from './AuthButton';
 
 export default function Navbar() {
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -24,9 +25,9 @@ export default function Navbar() {
   useEffect(() => {
     // Animation Config
     const hoverDuration = 0.5;
-    const clickDuration = 1.5;
+    const clickDuration = 0.8;
     const hoverEase = "power1.out"; // "ease" equivalent
-    const clickEase = "expo.inOut";
+    const clickEase = "power3.inOut";
 
     // Build Timelines
     tlClosedHover.current = gsap.timeline({ paused: true, defaults: { duration: hoverDuration, ease: hoverEase } })
@@ -87,7 +88,10 @@ export default function Navbar() {
     <div id="top-of-the-page" className={styles.navbar}>
       <div className={`w-layout-blockcontainer container w-container ${styles.navbarContainer}`}>
         <div className={styles.navbarContent}>
-          {/* Logo */}
+          <div className={styles.navbarLeftSide}>
+            <AuthButton />
+          </div>
+
           {/* Logo */}
           <Link href="/" className={styles.navbarTitle}>GRANTED</Link>
 

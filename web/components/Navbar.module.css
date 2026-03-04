@@ -98,6 +98,13 @@
   height: 2px;
 }
 
+.navbarLeftSide {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .navbarRightSide {
   grid-column: 3;
   display: flex;

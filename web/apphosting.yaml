@@ -12,6 +12,20 @@ env:
   - variable: NEXT_PUBLIC_POSTHOG_HOST
     value: "https://eu.i.posthog.com"
 
+  # Firebase Client SDK (public identifiers)
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyAN_r5lTMWxfHECYwI4DP4iS5cCZmo_NAg"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "granted-480910.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "granted-480910"
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "granted-480910.firebasestorage.app"
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "497910573020"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:497910573020:web:c83d219e41b3d76216d119"
+
   # Server-only vars (used by API routes to proxy to Cloud Run backends)
   - variable: SEARCH_API_URL
     value: "***REDACTED***"
