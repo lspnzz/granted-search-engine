@@ -48,3 +48,4 @@ pyrefly.toml
 
 # Claude worktrees
 .claude/worktrees/
+.claude/settings.local.json
