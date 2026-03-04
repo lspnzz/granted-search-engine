@@ -1,5 +1,8 @@
-import functions_framework
 import logging
+import os
+
+from firebase_functions import https_fn, options
+from firebase_functions.params import SecretParam, StringParam, IntParam
 from pydantic import ValidationError
 from src.models import SearchRequest
 from src.embed import embed_pitch
@@ -8,15 +11,29 @@ from src.vectorstore import query_grants
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Secrets (managed via firebase functions:secrets:set)
+OPENAI_API_KEY = SecretParam("OPENAI_API_KEY")
+PINECONE_API_KEY = SecretParam("PINECONE_API_KEY")
 
-import os
-from dotenv import load_dotenv
+# Environment params (set via firebase functions:config or .env)
+PINECONE_INDEX_NAME_PARAM = StringParam("PINECONE_INDEX_NAME")
+PINECONE_NAMESPACE_PARAM = StringParam("PINECONE_NAMESPACE")
+MODEL_NAME_PARAM = StringParam("MODEL_NAME")
+DIMENSIONS_PARAM = IntParam("DIMENSIONS")
+TOP_K_PARAM = IntParam("TOP_K", default=10)
 
-load_dotenv()
+cors_env = os.environ.get("CORS_ORIGINS")
+CORS_ORIGINS = cors_env.split(",") if cors_env else []
 
 
-@functions_framework.http
-def search_grants(request):
+@https_fn.on_request(
+    region="europe-west4",
+    secrets=[OPENAI_API_KEY, PINECONE_API_KEY],
+    cors=options.CorsOptions(
+        cors_origins=CORS_ORIGINS, cors_methods=["GET", "POST", "OPTIONS"]
+    ),
+)
+def search_grants(request: https_fn.Request) -> https_fn.Response:
     request_json = request.get_json(silent=True)
     if not request_json:
         return (
