@@ -7,6 +7,11 @@
       "source": "search",
       "codebase": "search",
       "runtime": "python312"
+    },
+    {
+      "source": "embed",
+      "codebase": "embed",
+      "runtime": "python312"
     }
   ]
 }

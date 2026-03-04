@@ -6,15 +6,43 @@ on:
       - main
     paths:
       - "search/**"
+      - "embed/**"
       - "firebase.json"
       - ".firebaserc"
       - ".github/workflows/deploy-firebase-functions.yml"
 
 jobs:
-  deploy:
-    name: Deploy to Firebase Functions
+  # Detect which function codebases have changed
+  detect-changes:
+    name: Detect Changes
     runs-on: ubuntu-latest
+    outputs:
+      search: ${{ steps.changes.outputs.search }}
+      embed: ${{ steps.changes.outputs.embed }}
+      shared: ${{ steps.changes.outputs.shared }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Check changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            search:
+              - 'search/**'
+            embed:
+              - 'embed/**'
+            shared:
+              - 'firebase.json'
+              - '.firebaserc'
+              - '.github/workflows/deploy-firebase-functions.yml'
+
+  deploy-search:
+    name: Deploy Search Function
+    needs: detect-changes
+    if: needs.detect-changes.outputs.search == 'true' || needs.detect-changes.outputs.shared == 'true'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,5 +70,40 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      - name: Deploy Firebase Functions
-        run: firebase deploy --only functions --project granted-480910
+      - name: Deploy search function
+        run: firebase deploy --only functions:search --project granted-480910
+
+  deploy-embed:
+    name: Deploy Embed Function
+    needs: detect-changes
+    if: needs.detect-changes.outputs.embed == 'true' || needs.detect-changes.outputs.shared == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Set up Python venv for embed function
+        run: |
+          python3.12 -m venv embed/venv
+          embed/venv/bin/pip install -r embed/requirements.txt
+
+      - name: Authenticate with Google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy embed function
+        run: firebase deploy --only functions:embed --project granted-480910
