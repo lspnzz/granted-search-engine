@@ -2,6 +2,18 @@
 
 import { useAuth } from '../context/AuthContext';
 import styles from './AuthButton.module.css';
+import type { User } from 'firebase/auth';
+
+function getInitials(user: User): string {
+  if (user.displayName) {
+    const parts = user.displayName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return (user.email ?? '').slice(0, 2).toUpperCase();
+}
 
 const UserIcon = () => (
   <svg width="18" height="18" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -28,16 +40,43 @@ const UserIconOpen = () => (
   </svg>
 );
 
+function Divider() {
+  return (
+    <div className={styles.dividerWrapper}>
+      <div className={styles.dividerLine}></div>
+    </div>
+  );
+}
+
 export default function AuthButton() {
   const { user, loading, panelOpen, togglePanel } = useAuth();
 
   if (loading) {
-    return <div className={styles.authButton} style={{ visibility: 'hidden' }}><UserIcon /></div>;
+    return (
+      <>
+        <div className={styles.authButton} style={{ visibility: 'hidden' }}><UserIcon /></div>
+        <Divider />
+      </>
+    );
+  }
+
+  if (user) {
+    return (
+      <>
+        <button className={`${styles.authButton} ${styles.signedIn}`} onClick={togglePanel} aria-label="Profile Menu">
+          <span className={styles.initials}>{getInitials(user)}</span>
+        </button>
+        <Divider />
+      </>
+    );
   }
 
   return (
-    <button className={styles.authButton} onClick={togglePanel} aria-label={user ? "Profile Menu" : "Sign In"}>
-      {panelOpen ? <UserIconOpen /> : <UserIcon />}
-    </button>
+    <>
+      <button className={styles.authButton} onClick={togglePanel} aria-label="Sign In">
+        {panelOpen ? <UserIconOpen /> : <UserIcon />}
+      </button>
+      <Divider />
+    </>
   );
 }

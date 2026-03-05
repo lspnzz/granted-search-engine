@@ -26,6 +26,37 @@
   box-shadow: -4px -4px 4px 0 var(--colors--shadow-light), 4px 4px 4px 0 var(--colors--shadow-dark);
 }
 
+.signedIn {
+  background-color: var(--colors--text-accent-tomato);
+  color: var(--colors--text-light);
+}
+
+.signedIn:hover {
+  color: var(--colors--text-light);
+}
+
+.initials {
+  font-family: var(--fonts--headings-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: inherit;
+}
+
+.dividerWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.dividerLine {
+  background-color: var(--colors--divider-light);
+  height: 1px;
+  box-shadow: 0 1px #fff;
+  margin: 0 var(--spacing--gap) 0 var(--spacing--gap-halved);
+  position: relative;
+}
+
 @media screen and (max-width: 767px) {
   .authButton {
     width: 2.5rem;
