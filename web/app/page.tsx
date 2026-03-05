@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import SearchBar from '../components/SearchBar';
 import GrantCard from '../components/GrantCard';
-import { Grant, searchGrants } from '../lib/api';
+import { Grant, searchGrants, RateLimitError } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 import styles from './page.module.css';
 import gsap from 'gsap';
 
@@ -14,10 +15,13 @@ function SearchResults() {
   const router = useRouter();
   const query = searchParams.get('q');
 
+  const { user, togglePanel } = useAuth();
+
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+  const [rateLimitHit, setRateLimitHit] = useState(false);
   const [showDividerAnimation, setShowDividerAnimation] = useState(false);
 
   // Animation Refs
@@ -117,8 +121,9 @@ function SearchResults() {
     setExpandedCardId(null); // Reset on new search
 
     try {
+      const idToken = user ? await user.getIdToken() : null;
       const [data] = await Promise.all([
-        searchGrants(pitch),
+        searchGrants(pitch, idToken),
         new Promise((resolve) => setTimeout(resolve, 500)) // Min 0.5s animation duration
       ]);
       setGrants(data.grants);
@@ -130,7 +135,18 @@ function SearchResults() {
       });
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch grants. Please try again.');
+
+      if (err instanceof RateLimitError) {
+        setRateLimitHit(true);
+        if (!err.isAuthenticated) {
+          setError("You've used your free search. Sign in for 9 more.");
+          togglePanel();
+        } else {
+          setError("You've used all 9 free searches.");
+        }
+      } else {
+        setError('Failed to fetch grants. Please try again.');
+      }
 
       // Track search error
       posthog.capture('search_error', {
@@ -170,6 +186,7 @@ function SearchResults() {
                 isLoading={loading}
                 hasResults={grants.length > 0}
                 onLoadingComplete={handleLoadingComplete}
+                disabled={rateLimitHit}
               />
             </div>
           </div>

@@ -9,9 +9,10 @@ interface SearchBarProps {
   isLoading?: boolean;
   hasResults?: boolean;
   onLoadingComplete?: () => void;
+  disabled?: boolean;
 }
 
-export default function SearchBar({ initialValue = '', onSearch, isLoading, hasResults, onLoadingComplete }: SearchBarProps) {
+export default function SearchBar({ initialValue = '', onSearch, isLoading, hasResults, onLoadingComplete, disabled }: SearchBarProps) {
   const [value, setValue] = useState(initialValue);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -150,11 +151,11 @@ export default function SearchBar({ initialValue = '', onSearch, isLoading, hasR
           onKeyDown={handleKeyDown}
           placeholder="Describe what you're working on, in depth"
           className={styles.input}
-          disabled={isLoading}
+          disabled={isLoading || disabled}
         />
         <button
           onClick={() => onSearch(value)}
-          disabled={isLoading}
+          disabled={isLoading || disabled}
           className={styles.searchButton}
         >
           <svg

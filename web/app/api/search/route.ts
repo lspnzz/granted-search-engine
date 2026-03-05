@@ -1,6 +1,8 @@
 import { GoogleAuth } from 'google-auth-library';
 import { NextRequest, NextResponse } from 'next/server';
 import { getPostHogClient } from '@/lib/posthog-server';
+import { verifyIdToken } from '@/lib/firebase-admin';
+import { checkAndIncrementUsage } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   const posthog = getPostHogClient();
@@ -11,6 +13,31 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { pitch } = body;
+
+    // --- Rate limiting ---
+    let userId: string | null = null;
+    const authHeader = req.headers.get('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const decoded = await verifyIdToken(authHeader.slice(7));
+        userId = decoded.uid;
+      } catch {
+        // Invalid token — treat as unauthenticated
+      }
+    }
+
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('x-real-ip')
+      || 'unknown';
+
+    const usage = await checkAndIncrementUsage(userId, clientIp);
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', isAuthenticated: usage.isAuthenticated },
+        { status: 429 }
+      );
+    }
+    // --- End rate limiting ---
 
     const targetUrl = process.env.SEARCH_API_URL;
     if (!targetUrl) {
