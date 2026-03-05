@@ -17,9 +17,18 @@ function SearchResults() {
 
   const { user, togglePanel } = useAuth();
 
-  const [grants, setGrants] = useState<Grant[]>([]);
+  const cached = query ? (() => {
+    try {
+      const raw = sessionStorage.getItem('search_results');
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed.pitch === query ? parsed.grants as Grant[] : null;
+    } catch { return null; }
+  })() : null;
+
+  const [grants, setGrants] = useState<Grant[]>(cached ?? []);
   const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
+  const [searched, setSearched] = useState(!!cached);
   const [error, setError] = useState('');
   const [rateLimitHit, setRateLimitHit] = useState(false);
   const [showDividerAnimation, setShowDividerAnimation] = useState(false);
@@ -92,25 +101,17 @@ function SearchResults() {
 
   }, []);
 
-  // Effect to handle URL query changes
-  useEffect(() => {
-    if (query) {
-      handleSearch(query);
-    }
-  }, [query]); // Added query to dependency array to re-run if query changes
-
   async function handleSearch(pitch: string) {
     if (!pitch.trim()) {
       setGrants([]);
       setSearched(false);
       setExpandedCardId(null); // Reset on clear
+      sessionStorage.removeItem('search_results');
       router.push('/', { scroll: false });
       return;
     }
 
-    if (pitch !== query) {
-      router.push(`/?q=${encodeURIComponent(pitch)}`, { scroll: false });
-    }
+    router.push(`/?q=${encodeURIComponent(pitch)}`, { scroll: false });
 
 
     setLoading(true);
@@ -127,6 +128,7 @@ function SearchResults() {
         new Promise((resolve) => setTimeout(resolve, 500)) // Min 0.5s animation duration
       ]);
       setGrants(data.grants);
+      sessionStorage.setItem('search_results', JSON.stringify({ pitch, grants: data.grants }));
 
       // Track successful grant search
       posthog.capture('grant_searched', {
