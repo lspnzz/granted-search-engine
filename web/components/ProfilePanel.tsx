@@ -56,10 +56,14 @@ export default function ProfilePanel() {
   if (user) {
     return (
       <div className={styles.panel}>
-        <div className={styles.profileSection}>
-          <div className={styles.avatar}>
+        <div className={styles.titleWrapper}>
+          <div className={styles.avatarSmall}>
             {getInitials(user)}
           </div>
+          <div className={styles.titleDivider}></div>
+        </div>
+
+        <div className={styles.profileSection}>
           <p className={styles.userEmail}>{user.email}</p>
           <button className={styles.signOutButton} onClick={() => signOut()}>
             Sign Out
