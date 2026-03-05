@@ -28,6 +28,6 @@ env:
 
   # Server-only vars (used by API routes to proxy to Cloud Run backends)
   - variable: SEARCH_API_URL
-    value: "***REDACTED***"
+    secret: SEARCH_API_URL
   - variable: AGENT_API_URL
-    value: "***REDACTED***"
+    secret: AGENT_API_URL
