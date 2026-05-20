@@ -41,12 +41,12 @@ function rankMockGrants(pitch: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const posthog = getPostHogClient();
   const requestId = req.headers.get('X-Request-ID') || randomUUID();
   const responseHeaders = { 'X-Request-ID': requestId };
 
   // Get distinct ID from client-side PostHog header if available
   const distinctId = req.headers.get('X-POSTHOG-DISTINCT-ID') || 'anonymous';
+  let posthog: ReturnType<typeof getPostHogClient> = null;
 
   try {
     const body = await req.json();
@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
         { status: 200, headers: responseHeaders }
       );
     }
+
+    posthog = getPostHogClient();
 
     // --- Rate limiting ---
     let userId: string | null = null;
@@ -93,7 +95,7 @@ export async function POST(req: NextRequest) {
       console.error("SEARCH_API_URL is not defined");
 
       // Track server-side error
-      posthog.capture({
+      posthog?.capture({
         distinctId,
         event: 'server_search_error',
         properties: {
@@ -126,7 +128,7 @@ export async function POST(req: NextRequest) {
       console.error(`Backend error: ${response.status} ${errorText} at ${targetUrl}`);
 
       // Track server-side backend error
-      posthog.capture({
+      posthog?.capture({
         distinctId,
         event: 'server_search_error',
         properties: {
@@ -146,7 +148,7 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
 
     // Track successful server-side search
-    posthog.capture({
+    posthog?.capture({
       distinctId,
       event: 'server_search_completed',
       properties: {
@@ -162,7 +164,7 @@ export async function POST(req: NextRequest) {
     console.error("Search API Error:", error);
 
     // Track server-side exception
-    posthog.capture({
+    posthog?.capture({
       distinctId,
       event: 'server_search_error',
       properties: {
