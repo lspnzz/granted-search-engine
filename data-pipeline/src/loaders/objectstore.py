@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+from pathlib import Path
 from datetime import datetime, timezone
 from google.cloud import storage
 from src.models import Grant
@@ -19,15 +21,32 @@ EMBEDDED_GRANT_CHUNKS_KEY_SUFFIX = "_embedded_grant_chunks.parquet"
 
 
 logger = logging.getLogger(__name__)
-client = storage.Client()
+
+
+def _is_mock_mode() -> bool:
+    return os.getenv("GRANTED_HARNESS_MODE") == "mock"
+
+
+def _raw_fixture_path() -> Path:
+    return Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "raw_grants.json"
 
 
 def _get_bucket(bucket_name: str) -> storage.Bucket:
+    client = storage.Client()
     return client.bucket(bucket_name)
 
 
 def _store_to_gcs(bucket_name: str, blob_name: str, data: list):
     """Uploads the data to Google Cloud Storage."""
+    if _is_mock_mode():
+        logger.info(
+            "Mock GCS upload skipped for %d items to gs://%s/%s",
+            len(data),
+            bucket_name,
+            blob_name,
+        )
+        return
+
     try:
         bucket = _get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
@@ -75,6 +94,10 @@ def store_clean_grants(grants: list[Grant]) -> None:
 
 
 def load_raw_grants(file_name: str) -> list[dict]:
+    if _is_mock_mode():
+        logger.info("Loading mock raw grants for %s", file_name)
+        return json.loads(_raw_fixture_path().read_text(encoding="utf-8"))
+
     bucket_name = RAW_EU_GRANTS_BUCKET_NAME
     bucket = _get_bucket(bucket_name)
     object_key = INCOMING_PREFIX + file_name

@@ -1,0 +1,17 @@
+[
+  {
+    "pitch_id": "ai-health-1",
+    "pitch": "We are building trustworthy AI software that helps hospitals analyse clinical imaging and improve diagnosis workflows.",
+    "matching_grant_ids": ["GRANT-AI-HEALTH"]
+  },
+  {
+    "pitch_id": "climate-city-1",
+    "pitch": "Our consortium helps cities run climate-neutral mobility and building energy pilots for urban resilience.",
+    "matching_grant_ids": ["GRANT-CLIMATE-CITIES"]
+  },
+  {
+    "pitch_id": "negative-1",
+    "pitch": "We are opening retail coffee shops focused on espresso, pastries, and takeaway service.",
+    "matching_grant_ids": []
+  }
+]

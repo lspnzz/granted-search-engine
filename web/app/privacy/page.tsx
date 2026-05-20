@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
           <p>No. Unless...</p>
           <ul className={styles.list}>
             <li className={styles.listItem}>
-              <span className={styles.crossedOut}>The police knocks on our door and point a gun at us</span> we're required by law
+              <span className={styles.crossedOut}>The police knocks on our door and point a gun at us</span> we&apos;re required by law
             </li>
             <li className={styles.listItem}>
               We need to protect our rights or property, whatever that means.
@@ -85,7 +85,7 @@ export default function PrivacyPolicy() {
         <div className={styles.divider}></div>
         <div className={styles.content}>
           <p>
-            Can't do much about it. These are needed to keep our app and website online.
+            Can&apos;t do much about it. These are needed to keep our app and website online.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
         <div className={styles.divider}></div>
         <div className={styles.content}>
           <p>
-            We do our best to try not to get your data stolen, but we're not perfect and you know how the internet works, or not, anyway, you get our point. Also, who knows, one day we might try to help that Nigerian prince after all...
+            We do our best to try not to get your data stolen, but we&apos;re not perfect and you know how the internet works, or not, anyway, you get our point. Also, who knows, one day we might try to help that Nigerian prince after all...
           </p>
         </div>
 

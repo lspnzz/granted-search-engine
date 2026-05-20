@@ -132,7 +132,6 @@ def compose_pitch(state: AgentState) -> dict:
 # ---------------------------------------------------------------------------
 def review_pitch(state: AgentState) -> dict:
     """Handle the user's response to the composed pitch."""
-    llm = _get_llm()
     messages = state["messages"]
 
     last_user_msg = None
@@ -170,6 +169,7 @@ def review_pitch(state: AgentState) -> dict:
         }
 
     # User wants changes
+    llm = _get_llm()
     change_response = llm.invoke(
         [
             SystemMessage(content=SYSTEM_PROMPT),
@@ -208,7 +208,7 @@ def execute_search(state: AgentState) -> dict:
         }
 
     try:
-        grants = search_grants(composed_pitch)
+        grants = search_grants(composed_pitch, request_id=state.get("request_id"))
 
         if grants:
             result_summary = f"Found **{len(grants)} matching EU grants**! Here are the top results:\n\n"

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "GRANT-AI-HEALTH",
+    "title": "AI tools for clinical imaging",
+    "summary": "Funding for trustworthy AI systems that improve medical imaging workflows.",
+    "description": "Supports hospitals, researchers, and SMEs building safe artificial intelligence for diagnostic imaging, workflow support, and patient outcomes.",
+    "url": "https://example.eu/grants/ai-health",
+    "start_date": "2026-01-01",
+    "deadline_date": "2026-09-30",
+    "status": "31094502",
+    "total_funding_opportunity": 9000000
+  },
+  {
+    "id": "GRANT-CLIMATE-CITIES",
+    "title": "Climate-neutral city pilots",
+    "summary": "Funding for urban climate adaptation and decarbonisation pilots.",
+    "description": "Supports cities, public authorities, and technology partners delivering energy efficiency, mobility, and climate resilience pilots.",
+    "url": "https://example.eu/grants/climate-cities",
+    "start_date": "2026-02-01",
+    "deadline_date": "2026-10-15",
+    "status": "31094502",
+    "total_funding_opportunity": 12000000
+  },
+  {
+    "id": "GRANT-FARM-ROBOTICS",
+    "title": "Robotics for sustainable farming",
+    "summary": "Funding for precision agriculture, robotics, and resilient food systems.",
+    "description": "Supports farms, agritech SMEs, and researchers using robotics, sensors, and automation to reduce inputs and improve crop resilience.",
+    "url": "https://example.eu/grants/farm-robotics",
+    "start_date": "2026-03-01",
+    "deadline_date": "2026-11-20",
+    "status": "31094502",
+    "total_funding_opportunity": 7000000
+  }
+]

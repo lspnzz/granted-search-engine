@@ -1,0 +1,28 @@
+[
+  {
+    "reference": "GRANT-AI-HEALTH",
+    "summary": "Funding for trustworthy AI systems that improve medical imaging workflows.",
+    "url": "https://example.eu/grants/ai-health",
+    "metadata": {
+      "title": ["AI tools for clinical imaging"],
+      "descriptionByte": ["<p>Supports hospitals and SMEs building safe artificial intelligence for diagnostic imaging.</p>"],
+      "startDate": ["2026-01-01"],
+      "deadlineDate": ["2026-09-30"],
+      "status": ["31094502"],
+      "budgetOverview": ["EUR 9 000 000"]
+    }
+  },
+  {
+    "reference": "GRANT-CLIMATE-CITIES",
+    "summary": "Funding for urban climate adaptation and decarbonisation pilots.",
+    "url": "https://example.eu/grants/climate-cities",
+    "metadata": {
+      "title": ["Climate-neutral city pilots"],
+      "descriptionByte": ["<p>Supports cities delivering energy efficiency and climate resilience pilots.</p>"],
+      "startDate": ["2026-02-01"],
+      "deadlineDate": ["2026-10-15"],
+      "status": ["31094502"],
+      "budgetOverview": ["EUR 12 000 000"]
+    }
+  }
+]

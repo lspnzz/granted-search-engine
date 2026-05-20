@@ -1,18 +1,67 @@
 import { GoogleAuth } from 'google-auth-library';
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { getPostHogClient } from '@/lib/posthog-server';
 import { verifyIdToken } from '@/lib/firebase-admin';
 import { checkAndIncrementUsage } from '@/lib/rate-limit';
+import { mockGrants } from '@/lib/mock-grants';
+import { parseSearchPayload } from '@/lib/request-validation';
+
+const STOP_WORDS = new Set(['a', 'and', 'are', 'for', 'in', 'of', 'or', 'the', 'to', 'we', 'with']);
+
+function tokens(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .match(/[a-z0-9]+/g)
+      ?.filter((token) => token.length > 2 && !STOP_WORDS.has(token)) ?? []
+  );
+}
+
+function rankMockGrants(pitch: string) {
+  const pitchTokens = tokens(pitch);
+  return mockGrants
+    .map((grant) => {
+      const grantTokens = tokens([
+        grant.id,
+        grant.title,
+        grant.description,
+        grant.status,
+      ].filter(Boolean).join(' '));
+      const score = [...pitchTokens].filter((token) => grantTokens.has(token)).length;
+      return { grant: { ...grant, match_score: score }, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || (a.grant.title ?? '').localeCompare(b.grant.title ?? ''))
+    .slice(0, 5)
+    .map(({ grant, score }, _index, ranked) => ({
+      ...grant,
+      match_score: ranked[0]?.score ? score / ranked[0].score : 0,
+    }));
+}
 
 export async function POST(req: NextRequest) {
   const posthog = getPostHogClient();
+  const requestId = req.headers.get('X-Request-ID') || randomUUID();
+  const responseHeaders = { 'X-Request-ID': requestId };
 
   // Get distinct ID from client-side PostHog header if available
   const distinctId = req.headers.get('X-POSTHOG-DISTINCT-ID') || 'anonymous';
 
   try {
     const body = await req.json();
-    const { pitch } = body;
+    const parsed = parseSearchPayload(body);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400, headers: responseHeaders });
+    }
+    const { pitch } = parsed.value;
+
+    if (process.env.GRANTED_HARNESS_MODE === 'mock') {
+      return NextResponse.json(
+        { pitch, grants: rankMockGrants(pitch) },
+        { status: 200, headers: responseHeaders }
+      );
+    }
 
     // --- Rate limiting ---
     let userId: string | null = null;
@@ -34,7 +83,7 @@ export async function POST(req: NextRequest) {
     if (!usage.allowed) {
       return NextResponse.json(
         { error: 'Rate limit exceeded', isAuthenticated: usage.isAuthenticated },
-        { status: 429 }
+        { status: 429, headers: responseHeaders }
       );
     }
     // --- End rate limiting ---
@@ -53,7 +102,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ error: "Configuration Error" }, { status: 500 });
+      return NextResponse.json({ error: "Configuration Error" }, { status: 500, headers: responseHeaders });
     }
 
     const auth = new GoogleAuth();
@@ -64,7 +113,8 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${idToken}`
+        'Authorization': `Bearer ${idToken}`,
+        'X-Request-ID': requestId,
       },
       body: JSON.stringify({
         pitch
@@ -87,7 +137,10 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ error: `Backend Error: ${response.statusText}` }, { status: response.status });
+      return NextResponse.json(
+        { error: `Backend Error: ${response.statusText}` },
+        { status: response.status, headers: responseHeaders }
+      );
     }
 
     const data = await response.json();
@@ -102,7 +155,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, { headers: responseHeaders });
 
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
@@ -118,6 +171,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json({ error: errorMessage }, { status: 500, headers: responseHeaders });
   }
 }

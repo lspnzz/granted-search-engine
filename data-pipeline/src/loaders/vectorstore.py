@@ -13,7 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-pc = Pinecone(api_key=PINECONE_API_KEY)
+
+
+def _is_mock_mode() -> bool:
+    return os.getenv("GRANTED_HARNESS_MODE") == "mock"
+
+
+def _client() -> Pinecone:
+    return Pinecone(api_key=PINECONE_API_KEY)
 
 
 class PineconeChunkRecord(BaseModel):
@@ -44,8 +51,17 @@ def upsert_chunks_to_pinecone(
     dimensions: int,
     host: str | None = None,
 ) -> None:
+    if _is_mock_mode():
+        logger.info(
+            "Mock Pinecone upsert skipped for %d chunks into index=%s namespace=%s",
+            len(chunks),
+            index_name,
+            namespace,
+        )
+        return
 
     if index_name:
+        pc = _client()
         existing_indexes = [i.name for i in pc.list_indexes()]
 
         if index_name not in existing_indexes:
@@ -78,7 +94,7 @@ def upsert_chunks_to_pinecone(
             "No Pinecone host could be determined (neither provided nor found via index name)."
         )
 
-    index = pc.Index(host=host)
+    index = _client().Index(host=host)
     BATCH_SIZE = 100
 
     for i in range(0, len(chunks), BATCH_SIZE):

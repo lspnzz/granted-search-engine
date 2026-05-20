@@ -28,7 +28,6 @@ function SearchResults() {
 
   const [grants, setGrants] = useState<Grant[]>(cached ?? []);
   const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(!!cached);
   const [error, setError] = useState('');
   const [rateLimitHit, setRateLimitHit] = useState(false);
   const [showDividerAnimation, setShowDividerAnimation] = useState(false);
@@ -104,7 +103,6 @@ function SearchResults() {
   async function handleSearch(pitch: string) {
     if (!pitch.trim()) {
       setGrants([]);
-      setSearched(false);
       setExpandedCardId(null); // Reset on clear
       sessionStorage.removeItem('search_results');
       router.push('/', { scroll: false });
@@ -117,7 +115,6 @@ function SearchResults() {
     setLoading(true);
     setShowDividerAnimation(false); // Reset divider animation
     setError('');
-    setSearched(true);
     setGrants([]);
     setExpandedCardId(null); // Reset on new search
 
@@ -172,7 +169,7 @@ function SearchResults() {
       <section className={`${styles.section} ${styles.atf}`} ref={containerRef}>
         <div className={styles.container}>
           <h1 className={styles.pageTitle} ref={titleRef}>
-            Write down your project's pitch and find relevant EU grants
+            Write down your project&apos;s pitch and find relevant EU grants
           </h1>
         </div>
 

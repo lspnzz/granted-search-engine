@@ -27,7 +27,7 @@ export default function TermsOfService() {
         <div className={styles.divider}></div>
         <div className={styles.content}>
           <p>
-            Welcome to Granted. By using our website, you agree to these terms. If you don't agree, well, that's awkward.
+            Welcome to Granted. By using our website, you agree to these terms. If you don&apos;t agree, well, that&apos;s awkward.
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export default function TermsOfService() {
         </div>
         <div className={styles.divider}></div>
 
-        <p className={styles.subtitle}>It's not our fault. Usually.</p>
+        <p className={styles.subtitle}>It&apos;s not our fault. Usually.</p>
 
         <div className={styles.content}>
           <p>
@@ -76,7 +76,7 @@ export default function TermsOfService() {
         </div>
         <div className={styles.divider}></div>
 
-        <p className={styles.subtitle}>Don't blame us.</p>
+        <p className={styles.subtitle}>Don&apos;t blame us.</p>
 
         <div className={styles.content}>
           <p>

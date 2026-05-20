@@ -1,20 +1,17 @@
 name: Deploy Firebase Functions
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches:
       - main
-    paths:
-      - "search/**"
-      - "embed/**"
-      - "firebase.json"
-      - ".firebaserc"
-      - ".github/workflows/deploy-firebase-functions.yml"
 
 jobs:
   # Detect which function codebases have changed
   detect-changes:
     name: Detect Changes
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
       search: ${{ steps.changes.outputs.search }}
@@ -23,11 +20,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 2
 
       - name: Check changed paths
         id: changes
         uses: dorny/paths-filter@v3
         with:
+          base: ${{ github.event.workflow_run.head_sha }}^
           filters: |
             search:
               - 'search/**'
@@ -46,6 +47,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -81,6 +84,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

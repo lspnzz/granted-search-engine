@@ -29,24 +29,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const googleProvider = new GoogleAuthProvider();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const firebaseConfigured = isFirebaseConfigured();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(firebaseConfigured);
   const [panelOpen, setPanelOpen] = useState(false);
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) {
-      setLoading(false);
-      return;
-    }
+    if (!firebaseConfigured) return;
     const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
     });
     return unsubscribe;
-  }, []);
+  }, [firebaseConfigured]);
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) return;
+    if (!firebaseConfigured) return;
     if (isSignInWithEmailLink(getFirebaseAuth(), window.location.href)) {
       let email = window.localStorage.getItem('emailForSignIn');
       if (!email) {
@@ -61,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .catch(console.error);
       }
     }
-  }, []);
+  }, [firebaseConfigured]);
 
   const signInWithGoogle = async () => {
     await signInWithPopup(getFirebaseAuth(), googleProvider);

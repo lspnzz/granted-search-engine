@@ -1,0 +1,9 @@
+{
+  "k": 3,
+  "recall_at_k": 1.0,
+  "precision_at_k": 0.3333,
+  "mrr_at_k": 1.0,
+  "negative_false_positive_rate": 0.0,
+  "max_recall_drop": 0.05,
+  "max_negative_false_positive_rate": 0.0
+}
