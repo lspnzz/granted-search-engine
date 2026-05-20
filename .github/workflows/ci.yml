@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  python:
+    name: Python Harness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -r search/requirements.txt
+          python -m pip install -r embed/requirements.txt
+          python -m pip install -r data-pipeline/requirements.txt
+          python -m pip install -r agent/requirements.txt
+
+      - name: Docs
+        run: python scripts/check_docs.py
+
+      - name: Ruff
+        run: python -m ruff check .
+
+      - name: Pytest
+        run: GRANTED_HARNESS_MODE=mock python -m pytest
+
+      - name: Smoke eval
+        run: GRANTED_HARNESS_MODE=mock python evals/search_eval.py --mode smoke
+
+  web:
+    name: Web Harness
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: GRANTED_HARNESS_MODE=mock SEARCH_API_URL=mock://search AGENT_API_URL=mock://agent npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E
+        run: GRANTED_HARNESS_MODE=mock SEARCH_API_URL=mock://search AGENT_API_URL=mock://agent npm run e2e

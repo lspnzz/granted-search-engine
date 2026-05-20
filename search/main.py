@@ -1,5 +1,8 @@
 import logging
 import os
+import json
+import time
+from uuid import uuid4
 
 from firebase_functions import https_fn, options
 from firebase_functions.params import SecretParam, StringParam, IntParam
@@ -24,6 +27,14 @@ cors_env = os.environ.get("CORS_ORIGINS")
 CORS_ORIGINS = cors_env.split(",") if cors_env else []
 
 
+def _request_id(request: https_fn.Request) -> str:
+    return request.headers.get("X-Request-ID") or str(uuid4())
+
+
+def _log_event(event: str, **fields) -> None:
+    logger.info(json.dumps({"service": "search", "event": event, **fields}))
+
+
 @https_fn.on_request(
     region="europe-west4",
     secrets=[OPENAI_API_KEY, PINECONE_API_KEY],
@@ -32,14 +43,19 @@ CORS_ORIGINS = cors_env.split(",") if cors_env else []
     ),
 )
 def search_grants(request: https_fn.Request) -> https_fn.Response:
+    started = time.perf_counter()
+    request_id = _request_id(request)
+    headers = {"X-Request-ID": request_id}
     request_json = request.get_json(silent=True)
     if not request_json:
         return (
             {"error": "Invalid JSON or empty body provided"},
             400,
+            headers,
         )  # (LS): Bad Request
 
     try:
+        _log_event("request.start", request_id=request_id, mode=os.getenv("GRANTED_HARNESS_MODE", "live"))
         search_req = SearchRequest(**request_json)  # (LS): Validate with Pydantic
 
         # Configuration Resolution (Request > Env > Error)
@@ -71,12 +87,13 @@ def search_grants(request: https_fn.Request) -> https_fn.Response:
                 400,
             )
 
-        embedded_pitch = embed_pitch(pitch)
+        embedded_pitch = embed_pitch(pitch, request_id=request_id)
         grants = query_grants(
             embedded_pitch,
             top_k=TOP_K,
             index_name=PINECONE_INDEX_NAME,
             namespace=PINECONE_NAMESPACE,
+            query_text=pitch,
         )
 
         response_data = {
@@ -84,12 +101,23 @@ def search_grants(request: https_fn.Request) -> https_fn.Response:
             "grants": [g.model_dump() for g in grants],
         }
 
-        return response_data
+        _log_event(
+            "request.complete",
+            request_id=request_id,
+            duration_ms=round((time.perf_counter() - started) * 1000, 2),
+            results_count=len(grants),
+        )
+        return response_data, 200, headers
 
     except ValidationError as e:
         logger.error(f"Validation Error: {e}")
-        return ({"error": "Validation Error", "details": e.errors()}, 400)
+        return (
+            {"error": "Validation Error", "details": e.errors(include_context=False)},
+            400,
+            headers,
+        )
 
     except Exception as e:
         logger.error(f"Error executing search: {e}")
-        return ({"error": "Internal Server Error"}, 500)
+        _log_event("request.error", request_id=request_id, error=type(e).__name__)
+        return ({"error": "Internal Server Error"}, 500, headers)

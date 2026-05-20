@@ -1,6 +1,8 @@
 import json
 import requests
 import logging
+import os
+from pathlib import Path
 from enum import StrEnum
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
@@ -25,6 +27,14 @@ PAGE_SIZE = 50  # (LS): EU Portal default page size
 
 
 logger = logging.getLogger(__name__)
+
+
+def _is_mock_mode() -> bool:
+    return os.getenv("GRANTED_HARNESS_MODE") == "mock"
+
+
+def _raw_fixture_path() -> Path:
+    return Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "raw_grants.json"
 
 
 def _iter_grant_pages():
@@ -120,6 +130,10 @@ def _iter_grants():
 
 def fetch_grants() -> list[dict]:
     """Fetch grants from the EU API."""
+    if _is_mock_mode():
+        logger.info("Loading mock grants from fixture")
+        return json.loads(_raw_fixture_path().read_text(encoding="utf-8"))
+
     # TODO(LS): Optimise with proper batching
     raw_grants = []  # (LS): Using a flat list to collect all grants
 

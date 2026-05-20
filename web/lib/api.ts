@@ -1,5 +1,3 @@
-import { mockGrants } from "./mock-grants";
-
 export interface Grant {
   id?: string;
   title?: string;
@@ -56,4 +54,3 @@ export async function searchGrants(pitch: string, idToken?: string | null): Prom
 
   return response.json();
 }
-

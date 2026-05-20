@@ -47,32 +47,7 @@ export default function AgentPage() {
     scrollToBottom();
   }, [messages, loading, scrollToBottom]);
 
-  // Initialise conversation — send empty to get the greeting
-  useEffect(() => {
-    if (!initialised) {
-      setInitialised(true);
-      startConversation();
-    }
-  }, [initialised]);
-
-  async function startConversation() {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await sendAgentMessage(
-        [{ role: 'user', content: 'Hello' }],
-        threadId,
-      );
-      handleAgentResponse(response, true);
-    } catch (err) {
-      console.error('Failed to start conversation:', err);
-      setError('Failed to connect to the agent. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleAgentResponse(response: AgentResponse, isInit = false) {
+  const handleAgentResponse = useCallback((response: AgentResponse, isInit = false) => {
     // Extract only the assistant messages from the response
     const agentMessages = response.messages.filter(m => m.role === 'assistant');
 
@@ -95,7 +70,32 @@ export default function AgentPage() {
     if (response.search_results && response.search_results.length > 0) {
       setSearchResults(response.search_results as Grant[]);
     }
-  }
+  }, []);
+
+  // Initialise conversation — send empty to get the greeting
+  useEffect(() => {
+    if (initialised) return;
+
+    async function initialiseConversation() {
+      setInitialised(true);
+      setLoading(true);
+      setError('');
+      try {
+        const response = await sendAgentMessage(
+          [{ role: 'user', content: 'Hello' }],
+          threadId,
+        );
+        handleAgentResponse(response, true);
+      } catch (err) {
+        console.error('Failed to start conversation:', err);
+        setError('Failed to connect to the agent. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    initialiseConversation();
+  }, [handleAgentResponse, initialised, threadId]);
 
   async function handleSend() {
     const trimmed = input.trim();

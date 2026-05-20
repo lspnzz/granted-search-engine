@@ -1,5 +1,4 @@
-from enum import StrEnum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class Grant(BaseModel):
@@ -36,12 +35,22 @@ class GrantChunk(BaseModel):
 
 
 class PipelineRequest(BaseModel):
-    load_grants_from_file: str | None = None
-    pinecone_index_name: str | None = None
-    pinecone_namespace: str | None = None
+    load_grants_from_file: str | None = Field(default=None, max_length=240)
+    pinecone_index_name: str | None = Field(default=None, max_length=120)
+    pinecone_namespace: str | None = Field(default=None, max_length=120)
 
     # Configuration Parameters
-    model_name: str | None = None
-    dimensions: int | None = None
-    chunk_size: int | None = None
-    chunk_overlap: int | None = None
+    model_name: str | None = Field(default=None, max_length=120)
+    dimensions: int | None = Field(default=None, ge=1, le=4096)
+    chunk_size: int | None = Field(default=None, ge=100, le=8000)
+    chunk_overlap: int | None = Field(default=None, ge=0, le=10000)
+
+    @model_validator(mode="after")
+    def chunk_overlap_must_be_smaller_than_size(self):
+        if (
+            self.chunk_size is not None
+            and self.chunk_overlap is not None
+            and self.chunk_overlap >= self.chunk_size
+        ):
+            raise ValueError("chunk_overlap must be smaller than chunk_size")
+        return self

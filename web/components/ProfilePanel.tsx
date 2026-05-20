@@ -39,7 +39,7 @@ export default function ProfilePanel() {
     try {
       await sendEmailLink(email);
       setEmailSent(true);
-    } catch (err) {
+    } catch {
       setError('Failed to send sign-in link. Please check your email and try again.');
     } finally {
       setSubmitting(false);

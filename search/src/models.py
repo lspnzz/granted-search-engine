@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import List
 
 
@@ -14,10 +14,18 @@ class Grant(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    pitch: str
-    top_k: int | None = 10
-    pinecone_index_name: str | None = None
-    pinecone_namespace: str | None = None
+    pitch: str = Field(min_length=1, max_length=8000)
+    top_k: int | None = Field(default=10, ge=1, le=50)
+    pinecone_index_name: str | None = Field(default=None, max_length=120)
+    pinecone_namespace: str | None = Field(default=None, max_length=120)
+
+    @field_validator("pitch")
+    @classmethod
+    def pitch_must_not_be_blank(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("pitch must not be blank")
+        return value
 
 
 class SearchResponse(BaseModel):

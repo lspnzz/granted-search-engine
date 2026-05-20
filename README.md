@@ -1,66 +1,72 @@
-# Granted: Search Engine
+# Granted Search Engine
 
-A serverless application for semantic search over EU grants. It ingests grant data fetching from the European Commissions's Funding & Tenders Portal API, generates vector embeddings, and enables semantic search queries.
+Granted is a semantic search engine over EU grants. A user describes their project pitch, and the system finds matching EU funding opportunities using embeddings and Pinecone.
 
-## Architecture
+## Services
 
-The system consists of two main Google Cloud Run Functions:
+| Service | Directory | Runtime | Deployment |
+|---|---|---|---|
+| Web Frontend | `web/` | Next.js 16, React 19 | Firebase App Hosting |
+| Search API | `search/` | Python 3.12, Firebase Functions | `firebase deploy --only functions:search` |
+| Embed API | `embed/` | Python 3.12, Firebase Functions | `firebase deploy --only functions:embed` |
+| Pitch Agent | `agent/` | Python 3.12, `functions-framework` | Cloud Run |
+| Data Pipeline | `data-pipeline/` | Python 3.12, `functions-framework` | Cloud Run |
 
-1.  **Data Pipeline** (`data-pipeline/`): An ETL pipeline that fetches raw grant data, cleans it, chunks it, embeds it using OpenAI embeddings, and indexes it into a Pinecone vector database.
-2.  **Search Engine** (`search-engine/`): An API endpoint that accepts a project pitch, generates embeddings, and queries the Pinecone database for relevant grants.
-3.  **Web Interface** (`web/`): A Next.js frontend application that allows users to interact with the search engine.
+See [ARCHITECTURE.md](ARCHITECTURE.md) and [docs/INDEX.md](docs/INDEX.md) for the repo-local system map.
 
 ## Local Development
 
-Prerequisites: Python 3.13+
-
-### Setup
-
 ```bash
-python3.13 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -r ./data-pipeline/requirements.txt
-pip install -r ./search-engine/requirements.txt
-```
+pip install -r requirements-dev.txt
+pip install -r search/requirements.txt
+pip install -r embed/requirements.txt
+pip install -r data-pipeline/requirements.txt
+pip install -r agent/requirements.txt
 
-### Web Client Setup
-
-```bash
 cd web
 npm install
 npm run dev
 ```
 
+For deterministic frontend development without live OpenAI, Pinecone, GCS, or Cloud Run services:
+
+```bash
+./scripts/dev.sh
+```
+
+## Checks
+
+```bash
+./scripts/check.sh
+./scripts/smoke.sh
+```
+
+`GRANTED_HARNESS_MODE=mock` makes checks use local fixtures in `tests/fixtures`.
+
 ## Configuration
 
-Both services are configured via JSON payloads.
+Python services follow the same rule: request body params override environment variables.
 
-### Data Pipeline Configuration (`/run_pipeline`)
+Required live-mode environment variables:
 
-Accepts a JSON body:
-- `pinecone_index_name`: Name of the Pinecone index.
-- `pinecone_namespace`: Namespace for the index.
-- `chunk_size`: Size of text chunks.
-- `chunk_overlap`: Overlap between chunks.
-- `model_name`: OpenAI embedding model name.
-- `dimensions`: Embedding dimensions.
-- `load_grants_from_file`: (Optional) Path to a local file to load grants from instead of fetching.
+- `search/`: `PINECONE_API_KEY`, `PINECONE_INDEX_NAME`, `PINECONE_NAMESPACE`, `EMBEDDINGS_SERVICE_URL`, `TOP_K`
+- `embed/`: `OPENAI_API_KEY`, `MODEL_NAME`, `DIMENSIONS`
+- `data-pipeline/`: `PINECONE_API_KEY`, `PINECONE_INDEX_NAME`, `PINECONE_NAMESPACE`, `EMBEDDINGS_SERVICE_URL`, `MODEL_NAME`, `DIMENSIONS`, `CHUNK_SIZE`, `CHUNK_OVERLAP`
+- `agent/`: `OPENAI_API_KEY`, `SEARCH_API_URL`, `AGENT_MODEL`, `AGENT_TEMPERATURE`
+- `web/`: `SEARCH_API_URL`, `AGENT_API_URL`
 
-### Search Engine Configuration (`/search_grants`)
+## Evals
 
-Accepts a JSON body:
-- `pitch`: The project pitch description to search for.
-- `top_k`: Number of results to return.
-- `model_name`: OpenAI embedding model name.
-- `dimensions`: Embedding dimensions.
-- `pinecone_index_name`: Target Pinecone index.
-- `pinecone_namespace`: Target Pinecone namespace.
+Executable search evals live in `evals/search_eval.py`; notebooks under `evals/notebooks` are exploratory only.
+
+```bash
+GRANTED_HARNESS_MODE=mock python evals/search_eval.py --mode smoke
+```
 
 ## License
 
-This project is licensed under the MIT License with the Commons Clause 1.0. 
-This means you are free to download, use, and modify the code for personal 
-use, but you are strictly prohibited from selling the software or using 
-it to provide a commercial service.
+This project is licensed under the MIT License with the Commons Clause 1.0.
 
-See the [LICENSE](LICENSE) file for the full text.
+See [LICENSE](LICENSE) for the full text.

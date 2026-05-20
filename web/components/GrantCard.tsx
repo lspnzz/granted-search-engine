@@ -19,7 +19,7 @@ function formatDate(dateString: string | undefined): string {
       month: '2-digit',
       year: 'numeric',
     }).format(date);
-  } catch (e) {
+  } catch {
     return dateString;
   }
 }

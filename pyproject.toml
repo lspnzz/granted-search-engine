@@ -1,0 +1,20 @@
+[tool.pytest.ini_options]
+testpaths = ["tests", "search/tests", "data-pipeline/tests", "agent/tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [
+  ".git",
+  ".venv",
+  "venv",
+  "web/node_modules",
+  "web/.next",
+  "evals/notebooks",
+  "search/venv",
+  "embed/venv",
+]
+
+[tool.ruff.lint]
+select = ["E9", "F"]

@@ -41,6 +41,10 @@ venv.bak/
 firebase-debug.log
 firebase-debug.*.log
 
+# Playwright
+web/test-results/
+web/playwright-report/
+
 # Other
 deploy.sh
 invoke.sh
